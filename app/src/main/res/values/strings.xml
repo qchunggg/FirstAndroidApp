@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">FirstAndroidAPP</string>
+    <!-- Nền & Phân đoạn -->
+    <color name="divider">#E0E0E0</color>
+
+    <!-- Text chính trên nền sáng -->
+    <color name="text_on_light">#000000</color>    <!-- “Nguyễn Văn A”, “nguyenvana@tlu.vn” -->
+    <color name="text_primary">#000000</color>     <!-- Tiêu đề, label chính -->
+    <color name="text_secondary">#536270</color>   <!-- Chú thích, trạng thái phụ -->
+
+    <!-- Accent / Điểm số -->
+    <color name="primary">#0F69E2</color>          <!-- “25 điểm” (màu xanh nổi bật) -->
+
+    <!-- Bottom Navigation -->
+    <color name="nav_selected">#263CC9</color>     <!-- Tab đang chọn -->
+    <color name="nav_unselected">#4D6480</color>   <!-- Tab chưa chọn -->
+
+    <!-- Status “Đang diễn ra” -->
+    <color name="status_green">#4CAF50</color>     <!-- Xanh lá nhạt, giống mockup -->
 </resources>
