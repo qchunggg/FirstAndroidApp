@@ -65,7 +65,6 @@
 
 
     <!-- White card container (rounded top) -->
-    <!-- White card container (rounded top) -->
     <LinearLayout
         android:id="@+id/contentCard"
         android:layout_width="match_parent"
@@ -74,8 +73,8 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavBar"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_title">
 
@@ -198,252 +197,32 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
-
-            <!-- Upcoming header -->
-            <TextView
-                android:id="@+id/tvUpcomingHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Hoạt động sắp diễn ra"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/llBadges" />
-
-            <!-- Activity item 1 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/itemActivity1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvUpcomingHeader">
-
-                <ImageView
-                    android:id="@+id/imgActivityIcon1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/heart"/>
-
-                <TextView
-                    android:id="@+id/tvActivityTitle1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Ngày hội hiến máu"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/tvActivityStatus1"
-                    app:layout_constraintStart_toEndOf="@id/imgActivityIcon1"
-                    app:layout_constraintTop_toTopOf="@id/imgActivityIcon1"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tvActivityStatus1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:text="Đang diễn ra"
-                    android:textColor="@color/white"
-                    android:background="@drawable/bg_status"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tvActivityTitle1" />
-
-                <TextView
-                    android:id="@+id/tvActivityInfo1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="21-22/5/2025  Hội trường T45"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/imgChevron1"
-                    app:layout_constraintStart_toStartOf="@id/tvActivityTitle1"
-                    app:layout_constraintTop_toBottomOf="@id/tvActivityTitle1" />
-
-                <ImageView
-                    android:id="@+id/imgChevron1"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    app:layout_constraintBottom_toBottomOf="@id/tvActivityInfo1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tvActivityInfo1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Activity item 2 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/itemActivity2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/itemActivity1">
-
-                <ImageView
-                    android:id="@+id/imgActivityIcon2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/heart"/>
-
-                <TextView
-                    android:id="@+id/tvActivityTitle2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Ngày hội hiến máu"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/tvActivityStatus2"
-                    app:layout_constraintStart_toEndOf="@id/imgActivityIcon2"
-                    app:layout_constraintTop_toTopOf="@id/imgActivityIcon2"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tvActivityStatus2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:text="Đang diễn ra"
-                    android:textColor="@color/white"
-                    android:background="@drawable/bg_status"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tvActivityTitle2" />
-
-                <TextView
-                    android:id="@+id/tvActivityInfo2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="21-22/5/2025  Hội trường T45"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@id/imgChevron2"
-                    app:layout_constraintStart_toStartOf="@id/tvActivityTitle2"
-                    app:layout_constraintTop_toBottomOf="@id/tvActivityTitle2" />
-
-                <ImageView
-                    android:id="@+id/imgChevron2"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    app:layout_constraintBottom_toBottomOf="@id/tvActivityInfo2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tvActivityInfo2" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tvUpcomingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Hoạt động sắp diễn ra"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llBadges" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvActivities"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="16dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/tvUpcomingHeader"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </LinearLayout>
 
     <!-- Manual Bottom Navigation Bar -->
-    <LinearLayout
-        android:id="@+id/bottomNavBar"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!-- Home -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iconHome"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/home"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hoạt động"
-                android:textColor="@color/nav_unselected"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Account -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iconAccount"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/user" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tài khoản"
-                android:textColor="@color/nav_unselected"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Tasks -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iconTasks"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/rate" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Xếp hạng"
-                android:textColor="@color/nav_unselected"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Settings -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iconSettings"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/setting" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cài đặt"
-                android:textColor="@color/nav_unselected"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
