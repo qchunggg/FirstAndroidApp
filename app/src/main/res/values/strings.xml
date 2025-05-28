@@ -9,12 +9,21 @@
     <color name="text_secondary">#536270</color>   <!-- Chú thích, trạng thái phụ -->
 
     <!-- Accent / Điểm số -->
-    <color name="primary">#0F69E2</color>          <!-- “25 điểm” (màu xanh nổi bật) -->
+    <color name="primary">#5F99FF</color>          <!-- “25 điểm” (màu xanh nổi bật) -->
 
     <!-- Bottom Navigation -->
     <color name="nav_selected">#263CC9</color>     <!-- Tab đang chọn -->
     <color name="nav_unselected">#4D6480</color>   <!-- Tab chưa chọn -->
 
     <!-- Status “Đang diễn ra” -->
-    <color name="status_green">#4CAF50</color>     <!-- Xanh lá nhạt, giống mockup -->
+    <color name="status_green">#34B489</color>     <!-- Xanh lá nhạt, giống mockup -->
+
+    <color name="category_orange">#FF8F23</color>
+
+    <!--Boder stroke-->
+    <color name="border">#CDCCCD</color>
+
+    <!--Button register -->
+    <color name="button_register">#2467EC</color>
+
 </resources>
