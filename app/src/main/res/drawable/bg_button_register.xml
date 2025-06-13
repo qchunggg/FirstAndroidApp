@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Nền đặc, cùng màu với backgroundTint của nút -->
-    <solid android:color="@color/button_register" />
-    <!-- Bo góc 8dp -->
-    <corners android:radius="8dp" />
-    <!-- Chiều cao mặc định (giúp MaterialButton dễ tính padding) -->
-    <size android:height="48dp" />
-</shape>

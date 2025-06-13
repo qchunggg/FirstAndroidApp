@@ -35,12 +35,12 @@
                 android:id="@+id/iconHome"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/home"/>
+                android:src="@drawable/ic_home"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hoạt động"
+                android:text="Trang chủ"
                 android:textColor="@color/nav_unselected"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -57,12 +57,12 @@
                 android:id="@+id/iconAccount"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/user" />
+                android:src="@drawable/ic_activity" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tài khoản"
+                android:text="Hoạt động"
                 android:textColor="@color/nav_unselected"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -79,12 +79,12 @@
                 android:id="@+id/iconTasks"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/rate" />
+                android:src="@drawable/ic_history" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Xếp hạng"
+                android:text="Lịch sử"
                 android:textColor="@color/nav_unselected"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -101,12 +101,12 @@
                 android:id="@+id/iconSettings"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/setting" />
+                android:src="@drawable/ic_account" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cài đặt"
+                android:text="Tài khoản"
                 android:textColor="@color/nav_unselected"
                 android:textSize="12sp" />
         </LinearLayout>
