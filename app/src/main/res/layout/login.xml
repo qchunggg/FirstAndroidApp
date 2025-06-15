@@ -12,7 +12,7 @@
         android:id="@+id/ivLogo"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:src="@drawable/logo"
+        android:src="@drawable/ic_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -56,7 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         android:hint="Email"
-        android:drawableStart="@drawable/email"
+        android:drawableStart="@drawable/ic_email"
         android:drawablePadding="12dp"
         android:padding="12dp"
         android:textSize="16sp"
@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         android:hint="Email"
-        android:drawableStart="@drawable/password"
+        android:drawableStart="@drawable/ic_password"
         android:drawablePadding="12dp"
         android:padding="12dp"
         android:textSize="16sp"
@@ -130,7 +130,6 @@
             android:text="Quên mật khẩu ?"
             android:textSize="18sp"
             android:textColor="#666666" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
