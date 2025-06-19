@@ -1,0 +1,51 @@
+<!-- res/layout/item_recent_activity.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <!-- Tên hoạt động -->
+    <TextView
+        android:id="@+id/tvActivityName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hiến máu"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Ngày tham gia -->
+    <TextView
+        android:id="@+id/tvActivityDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10/03/2025"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintStart_toEndOf="@id/tvActivityName"
+        app:layout_constraintEnd_toStartOf="@id/tvPoints"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Điểm -->
+    <TextView
+        android:id="@+id/tvPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
