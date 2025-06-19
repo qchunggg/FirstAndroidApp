@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- kế thừa từ kiểu mặc định của AppCompat Toolbar title -->
+    <style name="Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <!-- màu chữ -->
+        <item name="android:textColor">@color/black</item>
+        <!-- kích thước chữ -->
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>

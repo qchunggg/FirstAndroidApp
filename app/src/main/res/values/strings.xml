@@ -26,4 +26,10 @@
     <!--Button register -->
     <color name="button_register">#2467EC</color>
 
+    <!-- Gợi ý cho Spinner chọn tháng -->
+    <string name="select_month">Chọn tháng</string>
+
+    <!-- Gợi ý cho Spinner chọn loại (Tất cả) -->
+    <string name="all">Tất cả</string>
+
 </resources>
