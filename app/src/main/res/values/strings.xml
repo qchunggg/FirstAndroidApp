@@ -26,4 +26,14 @@
     <!--Button register -->
     <color name="button_register">#2467EC</color>
 
+        <!-- Định nghĩa mảng activity_types -->
+        <string-array name="activity_types">
+            <item>Hoạt động 1</item>
+            <item>Hoạt động 2</item>
+            <item>Hoạt động 3</item>
+            <item>Hoạt động 4</item>
+            <!-- Thêm các hoạt động khác tùy ý -->
+        </string-array>
+
+
 </resources>
