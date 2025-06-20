@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "363470340720",
+    "project_id": "tlu-engage",
+    "storage_bucket": "tlu-engage.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363470340720:android:0234e537087c7bfcc86ab5",
+        "android_client_info": {
+          "package_name": "com.example.firstandroidapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyComty1vvebcNsiJziiSntA3fhDUMpkTVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

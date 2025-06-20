@@ -45,12 +45,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+<!--    Full Name-->
+    <EditText
+        android:id="@+id/etFullName"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="32dp"
+        android:hint="Họ và tên"
+        android:drawableStart="@drawable/ic_person"
+        android:drawablePadding="12dp"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:background="@drawable/bg_card_border"
+        android:inputType="textPersonName|textCapWords"
+        app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- Email -->
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:hint="Email"
         android:drawableStart="@drawable/ic_email"
         android:drawablePadding="12dp"
@@ -58,7 +75,7 @@
         android:textSize="16sp"
         android:background="@drawable/bg_card_border"
         android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle"
+        app:layout_constraintTop_toBottomOf="@id/etFullName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -106,7 +123,7 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="35dp"
         android:backgroundTint="@color/button_register"
         android:cornerRadius="11dp"
         android:text="Đăng ký"
