@@ -32,7 +32,7 @@
         android:id="@+id/ivNotification"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_notification"
+        android:src="@drawable/ic_noti"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -91,7 +91,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-         <LinearLayout
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -99,12 +99,37 @@
             android:orientation="vertical"
             android:padding="8dp"
             android:gravity="center">
-            <TextView android:text="2" android:textStyle="bold" android:textSize="16sp"/>
-            <ImageView android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/avatar_female"/>
-            <TextView android:text="Phạm Thị B" android:textStyle="bold"/>
-            <TextView android:text="2251064879"/>
-            <TextView android:text="600 điểm" android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_avatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phạm Thị B"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2251064879" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="600 điểm"
+                android:textStyle="bold" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="0dp"
@@ -112,15 +137,39 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_card_highlight"
+            android:background="@drawable/bg_card_border"
             android:orientation="vertical"
             android:padding="8dp"
             android:gravity="center">
-            <TextView android:text="1" android:textStyle="bold" android:textSize="16sp"/>
-            <ImageView android:layout_width="60dp" android:layout_height="60dp" android:src="@drawable/avatar_male"/>
-            <TextView android:text="Nguyễn Văn A" android:textStyle="bold"/>
-            <TextView android:text="2251064879"/>
-            <TextView android:text="700 điểm" android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_avatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nguyễn Văn A"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2251064879" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="700 điểm"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -131,12 +180,37 @@
             android:orientation="vertical"
             android:padding="8dp"
             android:gravity="center">
-            <TextView android:text="3" android:textStyle="bold" android:textSize="16sp"/>
-            <ImageView android:layout_width="50dp" android:layout_height="50dp" android:src="@drawable/avatar_female"/>
-            <TextView android:text="Phạm Thị B" android:textStyle="bold"/>
-            <TextView android:text="2251064879"/>
-            <TextView android:text="500 điểm" android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_avatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phạm Thị B"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2251064879" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="500 điểm"
+                android:textStyle="bold" />
         </LinearLayout>
+
     </LinearLayout>
 
     <!-- Danh sách -->
