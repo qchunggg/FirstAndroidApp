@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,8 +44,17 @@ public class RegisterActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnRegister       = findViewById(R.id.btnRegister);
 
+        // Ánh xạ “Đăng nhập”
+        TextView tvLogin = findViewById(R.id.tvLogin);
+
         // Xử lý nút Đăng ký
         btnRegister.setOnClickListener(v -> registerUser());
+
+        // Xử lý nút Đăng nhập
+        tvLogin.setOnClickListener(v -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void registerUser() {
