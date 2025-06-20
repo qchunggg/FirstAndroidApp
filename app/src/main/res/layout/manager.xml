@@ -25,7 +25,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
-            android:src="@drawable/ic_avatar"
+            android:src="@drawable/ic_avata"
             android:backgroundTint="#CCCCCC"
             android:scaleType="centerCrop" />
 
@@ -74,11 +74,15 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Cuộc thi hùng biện tiếng Anh"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="10/05/2024"
                     android:textSize="14sp"
                     android:textColor="#888888" />
