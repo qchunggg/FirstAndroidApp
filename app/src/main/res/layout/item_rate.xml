@@ -24,7 +24,7 @@
         android:id="@+id/imgAvatar"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/avatar_1"
+        android:src="@drawable/ic_avatar"
         app:layout_constraintStart_toEndOf="@id/tvRank"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
