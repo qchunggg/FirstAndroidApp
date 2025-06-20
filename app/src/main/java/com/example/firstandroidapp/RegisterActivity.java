@@ -137,8 +137,9 @@ public class RegisterActivity extends AppCompatActivity {
                             .setValue(userProfile)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(this, MainActivity.class));
-                                finish();
+                                // Sau khi đăng ký thành công, chuyển sang màn Đăng nhập
+                                startActivity(new Intent(this, LoginActivity.class)); // Chuyển đến LoginActivity
+                                finish(); // Đóng màn hình Đăng ký
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "Lưu hồ sơ thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show()
@@ -148,4 +149,5 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show()
                 );
     }
+
 }

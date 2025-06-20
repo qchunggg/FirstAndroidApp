@@ -16,16 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private DatabaseReference dbRef;
 
     private EditText etEmail, etPassword;
     private MaterialButton btnLogin;
@@ -40,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
         // Khởi tạo Firebase
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
-        dbRef = FirebaseDatabase.getInstance().getReference("users");
 
         // Ánh xạ view
         etEmail = findViewById(R.id.etEmail);
@@ -112,31 +105,9 @@ public class LoginActivity extends AppCompatActivity {
         // Đăng nhập
         mAuth.signInWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
-                    String uid = authResult.getUser().getUid();
-
-                    // Tùy chọn: lấy thêm profile từ Realtime DB
-                    dbRef.child(uid)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.exists()) {
-                                        // Ví dụ: lấy fullName để gán vào session/local
-                                        String fullName = snapshot.child("fullName")
-                                                .getValue(String.class);
-                                        // ... bạn có thể lưu Local hoặc truyền Intent
-                                    }
-                                    // Điều hướng sang MainActivity
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                    finish();
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    // Nếu không đọc được profile, vẫn cho qua
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                    finish();
-                                }
-                            });
+                    // Đăng nhập thành công, chuyển sang MainActivity
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish(); // Đóng LoginActivity để không quay lại được
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(LoginActivity.this,

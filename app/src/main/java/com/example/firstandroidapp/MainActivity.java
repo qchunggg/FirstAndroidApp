@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
-            return;
+            return; // Dừng việc thực thi tiếp
         }
 
         // Ánh xạ LinearLayout bottom navigation
@@ -77,10 +77,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Áp dụng hiệu ứng chuyển tiếp
+        transaction.setCustomAnimations(
+                android.R.anim.fade_in,   // Hiệu ứng khi fragment mới xuất hiện
+                android.R.anim.fade_out   // Hiệu ứng khi fragment cũ biến mất
+        );
+
         View fragmentContainer = findViewById(R.id.fragmentContainer);
         if (fragmentContainer != null) {
             transaction.replace(R.id.fragmentContainer, fragment);
-            transaction.addToBackStack(null); // Nếu bạn không muốn backstack, có thể bỏ dòng này
+            transaction.addToBackStack(null); // Nếu không muốn backstack, có thể bỏ dòng này
             transaction.commit();
             Log.d(TAG, "Loaded fragment: " + fragment.getClass().getSimpleName());
         } else {
@@ -108,5 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 selectedText.setTextColor(getResources().getColor(R.color.navbar_selected));
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Clear session khi app bị tắt từ đa nhiệm
+        mAuth.signOut(); // Đăng xuất người dùng
     }
 }
