@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         // Ánh xạ view
         etRecoveryEmail = findViewById(R.id.etRecoveryEmail);
         btnSendRecovery = findViewById(R.id.btnSendRecovery);
+        ImageButton btnBack = findViewById(R.id.btnBack);
+
+        // Xử lý click nút Back để quay về LoginActivity
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         // Xử lý click gửi email khôi phục
         btnSendRecovery.setOnClickListener(v -> sendRecoveryEmail());

@@ -1,8 +1,12 @@
 package com.example.firstandroidapp;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.SingleLineTransformationMethod;
+import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private MaterialButton btnLogin;
     private TextView tvRegister, tvForgot;
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +43,18 @@ public class LoginActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference("users");
 
         // Ánh xạ view
-        etEmail    = findViewById(R.id.etEmail);
+        etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        btnLogin   = findViewById(R.id.btnLogin);
+        btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
-        tvForgot   = findViewById(R.id.tvForgot);
+        tvForgot = findViewById(R.id.tvForgot);
+
+        // Đặt mật khẩu mặc định là ẩn và cập nhật biểu tượng
+        etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        etPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, R.drawable.ic_visibility_off, 0);
+
+        // Set up password visibility toggle
+        setupPasswordVisibilityToggle(etPassword, R.drawable.ic_visibility_off, R.drawable.ic_visibility);
 
         // Xử lý click Đăng nhập
         btnLogin.setOnClickListener(v -> loginUser());
@@ -58,9 +70,34 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    private void setupPasswordVisibilityToggle(EditText editText, int visibilityOffIcon, int visibilityOnIcon) {
+        editText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                Drawable[] drawables = editText.getCompoundDrawables();
+                if (drawables[2] != null && event.getRawX() >= (editText.getRight() - drawables[2].getBounds().width() - editText.getPaddingEnd())) {
+                    if (isPasswordVisible) {
+                        // Ẩn mật khẩu
+                        editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                        editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, visibilityOffIcon, 0);
+                        isPasswordVisible = false;
+                    } else {
+                        // Hiển thị mật khẩu
+                        editText.setTransformationMethod(SingleLineTransformationMethod.getInstance());
+                        editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, visibilityOnIcon, 0);
+                        isPasswordVisible = true;
+                    }
+                    // Di chuyển con trỏ đến cuối
+                    editText.setSelection(editText.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
     private void loginUser() {
         String email = etEmail.getText().toString().trim();
-        String pass  = etPassword.getText().toString();
+        String pass = etPassword.getText().toString();
 
         // Validate
         if (TextUtils.isEmpty(email)) {

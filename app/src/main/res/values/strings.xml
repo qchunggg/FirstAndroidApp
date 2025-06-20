@@ -34,6 +34,10 @@
             <item>Hoạt động 4</item>
             <!-- Thêm các hoạt động khác tùy ý -->
         </string-array>
+  
+    <color name="navbar_unselected">#3D4D5C</color>
+    <color name="navbar_selected">#141414</color> <!-- Ví dụ màu chọn -->
 
-
+    <!-- Gợi ý cho Spinner chọn loại (Tất cả) -->
+    <string name="all">Tất cả</string>
 </resources>
