@@ -1,9 +1,11 @@
 package com.example.firstandroidapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +32,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // 2. Ánh xạ view
-        etNewPassword     = findViewById(R.id.etNewPassword);
+        etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        btnResetPassword  = findViewById(R.id.btnResetPassword);
+        btnResetPassword = findViewById(R.id.btnResetPassword);
+        ImageButton btnBack = findViewById(R.id.btnBack);
 
         // 3. Bắt Dynamic Link và lấy oobCode
         FirebaseDynamicLinks.getInstance()
@@ -50,7 +53,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     finish();
                 });
 
-        // 4. Xử lý click Đặt lại mật khẩu
+        // 4. Xử lý click nút Back để quay về ForgotPasswordActivity
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(ResetPasswordActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        // 5. Xử lý click Đặt lại mật khẩu
         btnResetPassword.setOnClickListener(v -> resetPassword());
     }
 
@@ -58,7 +68,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         String newPass = etNewPassword.getText().toString().trim();
         String confirm = etConfirmPassword.getText().toString().trim();
 
-        // 5. Validate
+        // 6. Validate
         if (TextUtils.isEmpty(newPass)) {
             etNewPassword.setError("Nhập mật khẩu mới");
             return;
@@ -78,7 +88,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // 6. Gọi API xác nhận thay đổi mật khẩu
+        // 7. Gọi API xác nhận thay đổi mật khẩu
         mAuth.confirmPasswordReset(oobCode, newPass)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this,
