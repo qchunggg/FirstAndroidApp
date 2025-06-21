@@ -53,10 +53,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_gravity="center"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="16dp"
-        android:text="Tài khoản"
+        android:text="Sửa thông tin"
         android:textColor="#141414"
         android:textSize="34sp"
         android:textStyle="bold" />
@@ -152,28 +152,7 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Điểm tích lũy -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Điểm tích luỹ:"
-                android:textColor="#71757D"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1.250"
-                android:textColor="#141414"
-                android:textSize="16sp" />
-        </LinearLayout>
 
         <!-- Số điện thoại -->
         <LinearLayout
@@ -198,51 +177,22 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Xếp hạng học kỳ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Xếp hạng học kỳ:"
-                android:textColor="#71757D"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5"
-                android:textColor="#141414"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- Xếp hạng năm -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Xếp hạng năm:"
-                android:textColor="#71757D"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20"
-                android:textColor="#141414"
-                android:textSize="16sp" />
-        </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+
+        android:backgroundTint="#3F51B5"
+        android:text="Xác nhận"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
 
     <!-- Bottom Navigation (chèn sau nếu cần) -->
 
