@@ -1,6 +1,7 @@
 package com.example.firstandroidapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,8 @@ public class ActivityFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rvActivities);
         activityList = new ArrayList<>();
         fullActivityList = new ArrayList<>();
-        activityAdapter = new ActivityAdapter(activityList);
-        recyclerView.setAdapter(activityAdapter);
+        activityAdapter = new ActivityAdapter(activityList);  // Gắn adapter
+        recyclerView.setAdapter(activityAdapter);  // Gắn RecyclerView với adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Khởi tạo Firebase
@@ -53,16 +54,17 @@ public class ActivityFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                fullActivityList.clear();
-                activityList.clear();
-                Set<String> categories = new HashSet<>();
+                fullActivityList.clear();  // Làm sạch danh sách hiện tại
+                activityList.clear();  // Làm sạch activityList
 
+                Set<String> categories = new HashSet<>();
+                // Duyệt qua từng phần tử trong Firebase và thêm vào activityList
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
                         fullActivityList.add(activity);
                         String type = activity.getType().replace("\"", "");
-                        categories.add(type);
+                        categories.add(type);  // Lấy danh mục hoạt động
                     }
                 }
 
@@ -71,28 +73,26 @@ public class ActivityFragment extends Fragment {
                 categoryList.add("Tất cả");
                 categoryList.addAll(categories);
 
-                // Cập nhật Spinner với layout tùy chỉnh
+                // Cập nhật Spinner với danh sách các category
                 if (getContext() != null) {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            getContext(),
-                            R.layout.spinner_dropdown_item,
-                            categoryList
-                    );
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.spinner_dropdown_item, categoryList);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinnerCategory.setAdapter(adapter);
                 }
 
+                // Cập nhật activityList với dữ liệu mới và thông báo cho adapter
                 activityList.addAll(fullActivityList);
-                activityAdapter.notifyDataSetChanged();
+                activityAdapter.notifyDataSetChanged();  // Cập nhật RecyclerView
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("Database error: " + error.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                // Nếu có lỗi khi lấy dữ liệu từ Firebase
+                Log.w("Firebase", "Failed to read value.", databaseError.toException());
             }
         });
 
-        // Lắng nghe sự kiện chọn item
+        // Lắng nghe sự kiện chọn category trong Spinner
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -109,7 +109,7 @@ public class ActivityFragment extends Fragment {
         return view;
     }
 
-    // Hàm lọc danh sách hoạt động
+    // Hàm lọc danh sách hoạt động theo category
     private void filterActivities(String category) {
         activityList.clear();
         if (category.equals("Tất cả")) {
@@ -121,6 +121,6 @@ public class ActivityFragment extends Fragment {
                 }
             }
         }
-        activityAdapter.notifyDataSetChanged();
+        activityAdapter.notifyDataSetChanged();  // Cập nhật RecyclerView sau khi lọc
     }
 }

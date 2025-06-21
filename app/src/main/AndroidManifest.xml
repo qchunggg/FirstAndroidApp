@@ -48,6 +48,9 @@
                     android:pathPrefix="/resetPassword"/>
             </intent-filter>
         </activity>
+
+<!--        Màn chi tiết hoạt động-->
+        <activity android:name=".DetailEventActivity" />
     </application>
 
 </manifest>
