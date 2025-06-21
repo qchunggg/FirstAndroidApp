@@ -7,4 +7,12 @@
         <!-- kích thước chữ -->
         <item name="android:textSize">20sp</item>
     </style>
+
+    <style name="StatusBarStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Không cần xác định statusBarColor -->
+        <item name="android:windowLightStatusBar">true</item> <!-- Đổi màu icon và chữ thành đen -->
+        <item name="android:statusBarColor">@android:color/white</item> <!-- Thanh trạng thái màu trắng -->
+    </style>
+
+
 </resources>
