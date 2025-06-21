@@ -48,6 +48,15 @@
                     android:pathPrefix="/resetPassword"/>
             </intent-filter>
         </activity>
+        <activity android:name=".EditProfileActivity"
+            android:exported="true">
+            <!-- Nếu bạn muốn activity này là một phần của lịch sử back stack -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
     </application>
 

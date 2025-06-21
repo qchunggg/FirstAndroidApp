@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         // Ánh xạ LinearLayout bottom navigation
         bottomNav = findViewById(R.id.bottomNavBar);
         if (bottomNav == null) {
-            Log.e(TAG, "bottomNavBar not found");
             finish();
             return;
         }
@@ -154,7 +153,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Ánh xạ các mục trong menu và thiết lập sự kiện click
         menuView.findViewById(R.id.menu_edit_profile).setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Chỉnh sửa hồ sơ", Toast.LENGTH_SHORT).show();
+            // Khi người dùng nhấn vào "Chỉnh sửa hồ sơ", chuyển đến EditProfileActivity
+            Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);  // Chuyển sang EditProfileActivity
+            startActivity(intent);  // Mở EditProfileActivity
             popupWindow.dismiss();  // Đóng menu sau khi click
         });
 
@@ -168,9 +169,16 @@ public class MainActivity extends AppCompatActivity {
             popupWindow.dismiss();
         });
 
+        // **Đăng xuất**: Khi người dùng nhấn vào "Đăng xuất"
         menuView.findViewById(R.id.menu_logout).setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
-            popupWindow.dismiss();
+            // Đăng xuất người dùng
+            mAuth.signOut();
+
+            // Chuyển hướng về màn hình đăng nhập
+            Toast.makeText(MainActivity.this, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));  // Chuyển đến LoginActivity
+            finish();  // Đóng MainActivity sau khi đăng xuất
+            popupWindow.dismiss();  // Đóng menu
         });
     }
 }
