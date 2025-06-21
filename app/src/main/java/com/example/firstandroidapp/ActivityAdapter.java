@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder>{
+public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
 
     private List<ActivityModel> activitiesList;
 
@@ -37,7 +37,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         holder.tvTime.setText(activity.getTime());
         holder.tvQuantity.setText(activity.getQuantity());
 
-        // Nếu có ảnh (thumbnailResId != 0), dùng ảnh đó; ngược lại dùng ảnh mặc định
+        // Xử lý hình ảnh thumbnail
         if (activity.getThumbnailResId() != 0) {
             holder.ivThumb.setImageResource(activity.getThumbnailResId());
         } else {

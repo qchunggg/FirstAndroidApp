@@ -9,6 +9,9 @@ public class ActivityModel {
     private String quantity;
     private int thumbnailResId;
 
+    public ActivityModel() {
+    }
+
     public ActivityModel(String name, String type, String description, String time, String quantity, int thumbnailResId) {
         this.name = name;
         this.type = type;

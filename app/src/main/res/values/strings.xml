@@ -38,6 +38,15 @@
         <!-- Thêm các hoạt động khác tùy ý -->
     </string-array>
 
+<!--    Các hoạt động ở trang activites-->
+    <string-array name="categories">
+        <item>Tất cả</item>
+        <item>Tình nguyện</item>
+        <item>Học tập</item>
+        <item>Thể thao</item>
+        <item>Văn hóa</item>
+    </string-array>
+
     <color name="navbar_unselected">#3D4D5C</color>
     <color name="navbar_selected">#141414</color> <!-- Ví dụ màu chọn -->
 

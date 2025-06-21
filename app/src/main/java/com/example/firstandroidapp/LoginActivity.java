@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.SingleLineTransformationMethod;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -109,10 +110,10 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish(); // Đóng LoginActivity để không quay lại được
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(LoginActivity.this,
-                                "Đăng nhập thất bại: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show()
-                );
+                .addOnFailureListener(e -> {
+                    // Ghi log chi tiết lỗi để dễ debug
+                    Log.e("LoginError", "Error: " + e.getMessage());
+                    Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 }

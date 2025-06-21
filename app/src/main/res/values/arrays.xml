@@ -1,9 +1,0 @@
-<resources>
-    <string-array name="categories">
-        <item>Tất cả</item>
-        <item>Tình nguyện</item>
-        <item>Học tập</item>
-        <item>Thể thao</item>
-        <item>Văn hóa</item>
-    </string-array>
-</resources>
