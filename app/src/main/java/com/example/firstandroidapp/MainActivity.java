@@ -3,9 +3,13 @@ package com.example.firstandroidapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -18,11 +22,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private LinearLayout bottomNav;
+    private PopupWindow popupWindow;  // Biến để giữ PopupWindow
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.navbar);
+        setContentView(R.layout.navbar); // Gán layout chứa ic_menu
 
         // Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -61,6 +66,18 @@ public class MainActivity extends AppCompatActivity {
         setupClickListener(activitesLayout, new ActivityFragment());
         setupClickListener(historiesLayout, new HistoryFragment());
         setupClickListener(accountsLayout, new AccountFragment());
+
+        // Ánh xạ ic_menu và thiết lập sự kiện click
+        ImageView icMenu = findViewById(R.id.ic_menu);
+        icMenu.setOnClickListener(v -> {
+            // Kiểm tra xem menu đã được mở chưa, nếu có thì đóng, nếu không thì mở
+            if (popupWindow != null && popupWindow.isShowing()) {
+                popupWindow.dismiss();  // Đóng menu nếu đang mở
+            } else {
+                // Hiển thị menu khi nhấn vào ic_menu
+                showMenu();
+            }
+        });
     }
 
     private void setupClickListener(LinearLayout layout, Fragment fragment) {
@@ -123,5 +140,37 @@ public class MainActivity extends AppCompatActivity {
 
         // Clear session khi app bị tắt từ đa nhiệm
         mAuth.signOut(); // Đăng xuất người dùng
+    }
+
+    // Phương thức hiển thị menu khi nhấn vào ic_menu
+    private void showMenu() {
+        // Inflate layout menu từ XML
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View menuView = inflater.inflate(R.layout.setting_user, null);  // menu_layout là layout bạn đã cung cấp
+
+        // Tạo PopupWindow với layout đã tạo
+        popupWindow = new PopupWindow(menuView, 550, LinearLayout.LayoutParams.MATCH_PARENT, true);  // Đã thay đổi chiều rộng thành 350dp
+        popupWindow.showAsDropDown(findViewById(R.id.ic_menu));  // Hiển thị PopupWindow ở dưới ic_menu
+
+        // Ánh xạ các mục trong menu và thiết lập sự kiện click
+        menuView.findViewById(R.id.menu_edit_profile).setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Chỉnh sửa hồ sơ", Toast.LENGTH_SHORT).show();
+            popupWindow.dismiss();  // Đóng menu sau khi click
+        });
+
+        menuView.findViewById(R.id.menu_change_password).setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
+            popupWindow.dismiss();
+        });
+
+        menuView.findViewById(R.id.menu_notification_settings).setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Cài đặt thông báo", Toast.LENGTH_SHORT).show();
+            popupWindow.dismiss();
+        });
+
+        menuView.findViewById(R.id.menu_logout).setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+            popupWindow.dismiss();
+        });
     }
 }
