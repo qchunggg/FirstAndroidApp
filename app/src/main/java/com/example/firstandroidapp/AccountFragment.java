@@ -12,7 +12,7 @@ public class AccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate layout activity_main.xml cho HomeFragment
-        View view = inflater.inflate(R.layout.activity_main, container, false);
+        View view = inflater.inflate(R.layout.user, container, false);
 
         // Có thể thêm logic xử lý dữ liệu tại đây
         return view;
