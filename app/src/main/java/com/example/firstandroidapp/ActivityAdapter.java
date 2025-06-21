@@ -1,5 +1,6 @@
 package com.example.firstandroidapp;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +32,27 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     @Override
     public void onBindViewHolder(@NonNull ActivityViewHolder holder, int position) {
         ActivityModel activity = activitiesList.get(position);
+
+        // Hiển thị mô tả rút gọn
+        String description = activity.getDescription();
+        if (description.length() > 50) { // Giới hạn độ dài mô tả
+            description = description.substring(0, 50) + "..."; // Thêm dấu ba chấm
+        }
+        holder.tvDesc.setText(description);
+
         holder.tvName.setText(activity.getName());
         holder.tvType.setText(activity.getType());
-        holder.tvDesc.setText(activity.getDescription());
         holder.tvTime.setText(activity.getTime());
         holder.tvQuantity.setText(activity.getQuantity());
+
+        // Kiểm tra trước khi split
+        String quantity = activity.getQuantity();
+        String shortQuantity = quantity;
+        if (quantity.contains("/")) {
+            String[] quantitySplit = quantity.split("/");
+            shortQuantity = quantitySplit[0] + "/" + quantitySplit[1].substring(0, 2);  // Chỉ lấy 2 chữ số đầu của tổng
+        }
+        holder.tvQuantity.setText(shortQuantity);  // Hiển thị số lượng ngắn gọn
 
         // Xử lý hình ảnh thumbnail
         if (activity.getThumbnailResId() != 0) {
@@ -43,6 +60,20 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         } else {
             holder.ivThumb.setImageResource(R.drawable.ic_photo); // Ảnh mặc định
         }
+
+        // Xử lý sự kiện click vào nút Chi tiết
+        holder.btnDetail.setOnClickListener(v -> {
+            // Tạo Intent để chuyển sang DetailEventActivity
+            Intent intent = new Intent(v.getContext(), DetailEventActivity.class);
+            // Truyền các dữ liệu qua Intent
+            intent.putExtra("name", activity.getName());
+            intent.putExtra("description", activity.getDescription());
+            intent.putExtra("time", activity.getTime());
+            intent.putExtra("quantity", activity.getQuantity());
+            intent.putExtra("location", activity.getLocation());
+            intent.putExtra("eventOrganizer", activity.getEventOrganizer());  // Truyền thêm thông tin tổ chức sự kiện
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
