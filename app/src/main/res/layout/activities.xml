@@ -9,19 +9,49 @@
     android:background="@android:color/white" >
 
     <!-- AppBar -->
-    <com.google.android.material.appbar.MaterialToolbar
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
         android:background="#FFFFFF"
-        app:navigationIcon="@drawable/ic_menu"
-        app:title="TLU Engage"
-        app:titleCentered="true"
-        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        >
+
+        <!-- Icon Menu -->
+        <ImageView
+            android:id="@+id/ivMenu"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_menu"
+            />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TLU Engage"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center" /> <!-- Căn giữa nội dung -->
+
+        <!-- Icon Search -->
+        <ImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_search"
+            />
+    </LinearLayout>
 
     <!-- Tiêu đề "Hoạt động" -->
     <TextView
