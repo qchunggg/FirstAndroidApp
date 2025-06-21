@@ -54,6 +54,9 @@
 
 <!--        Màn admin dashboard-->
         <activity android:name=".AdminActivity" />
+
+        <!--        Màn quản lý danh mục-->
+        <activity android:name=".ActivityManageCategory" />
     </application>
 
 </manifest>
