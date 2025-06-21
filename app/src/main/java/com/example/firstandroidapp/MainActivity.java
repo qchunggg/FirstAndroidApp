@@ -1,7 +1,9 @@
 package com.example.firstandroidapp;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -18,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private LinearLayout bottomNav;
+
+    private Handler handler;
+    private Runnable logoutRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,5 +128,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Clear session khi app bị tắt từ đa nhiệm
         mAuth.signOut(); // Đăng xuất người dùng
+    }
+
+    private void resetLogoutTimer() {
+        // Hủy timer cũ nếu có
+        handler.removeCallbacks(logoutRunnable);
+
+        // Đặt lại timer cho việc đăng xuất sau 30 giây
+        handler.postDelayed(logoutRunnable, 30000); // 30 giây
     }
 }

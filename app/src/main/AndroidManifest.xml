@@ -10,10 +10,10 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label=""
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FirstAndroidAPP"
+        android:theme="@style/StatusBarStyle"
         tools:targetApi="31"
         android:name=".MyApp">
         <activity
@@ -51,6 +51,9 @@
 
 <!--        Màn chi tiết hoạt động-->
         <activity android:name=".DetailEventActivity" />
+
+<!--        Màn admin dashboard-->
+        <activity android:name=".AdminActivity" />
     </application>
 
 </manifest>
