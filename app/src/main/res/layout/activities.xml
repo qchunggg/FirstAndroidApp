@@ -40,17 +40,20 @@
     <!-- Spinner chọn danh mục -->
     <Spinner
         android:id="@+id/spinnerCategory"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="40dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
         android:background="@drawable/bg_spinner_round"
-        android:spinnerMode="dropdown"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintStart_toStartOf="@id/tvHeader"
-        app:layout_constraintTop_toBottomOf="@id/tvHeader"/>
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:overlapAnchor="false"
+        android:dropDownWidth="match_parent"
+        android:popupBackground="@drawable/spinner_dropdown_popup_background"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Danh sách cuộn -->
     <androidx.recyclerview.widget.RecyclerView

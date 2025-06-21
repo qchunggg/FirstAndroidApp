@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "363470340720",
+    "firebase_url": "https://tlu-engage-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "tlu-engage",
     "storage_bucket": "tlu-engage.firebasestorage.app"
   },
