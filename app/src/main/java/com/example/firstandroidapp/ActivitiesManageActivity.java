@@ -3,8 +3,11 @@ package com.example.firstandroidapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,7 +34,7 @@ public class ActivitiesManageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manager_activity); // Giao diện chứa RecyclerView và nút thao tác
+        setContentView(R.layout.manager_activity);
 
         // Ánh xạ view
         rvActivities = findViewById(R.id.rvActivities);
@@ -41,9 +44,13 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         // Cấu hình RecyclerView
         rvActivities.setLayoutManager(new LinearLayoutManager(this));
         activityList = new ArrayList<>();
-        adapter = new ActivityManageAdapter(activityList);
-        rvActivities.setAdapter(adapter);
 
+        // Tạo adapter và truyền actionListener vào
+        adapter = new ActivityManageAdapter(activityList, activity -> {
+            // Xử lý sự kiện xóa khi người dùng nhấn nút xóa
+            showDeleteConfirmationDialog(activity);
+        });
+        rvActivities.setAdapter(adapter);
 
         // Truy cập Firebase Database
         database = FirebaseDatabase.getInstance().getReference("activities");
@@ -55,15 +62,12 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             finish();
         });
 
-        // Chức năng thêm hoạt động mới (mở màn khác nếu bạn có)
-        /*
         btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(ActivitiesManageActivity.this, AddActivityActivity.class);
-            startActivity(intent);
+            // Logic để thêm hoạt động mới
         });
-        */
     }
 
+    // Tải danh sách hoạt động từ Firebase
     private void loadActivitiesFromFirebase() {
         database.addValueEventListener(new ValueEventListener() {
             @Override
@@ -84,4 +88,47 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Hiển thị dialog xác nhận xóa
+    private void showDeleteConfirmationDialog(ActivityModel activity) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_remove_category, null);
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        final android.app.AlertDialog dialog = builder.setView(dialogView).create();
+
+        // Nút "Hủy"
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        // Nút "Đồng ý" - Xóa hoạt động khỏi Firebase
+        Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+        btnConfirm.setOnClickListener(v -> {
+            String key = activity.getKey();  // Lấy key của hoạt động
+            if (key != null) {
+                deleteActivityFromFirebase(key);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "Không tìm thấy key của hoạt động", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    // Xóa hoạt động khỏi Firebase
+    private void deleteActivityFromFirebase(String activityKey) {
+        if (activityKey != null) {
+            database.child(activityKey).removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(ActivitiesManageActivity.this, "Xóa hoạt động thành công", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(ActivitiesManageActivity.this, "Xóa không thành công: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(ActivitiesManageActivity.this, "Không tìm thấy key của hoạt động", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
