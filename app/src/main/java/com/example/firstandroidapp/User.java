@@ -11,15 +11,18 @@ public class User {
     public User() {
     }
 
-    // Constructor mới với các tham số className, department, và phone
-    public User(String className, String department, String phone) {
+    // Constructor với tất cả các tham số
+    public User(String name, String studentId, String className, String department, String phone) {
+        this.name = name;
+        this.studentId = studentId;
         this.className = className;
         this.department = department;
         this.phone = phone;
     }
 
     // Getter và Setter cho tất cả các trường
-    public String getName() {
+
+    public String getUserName() {
         return name;
     }
 
