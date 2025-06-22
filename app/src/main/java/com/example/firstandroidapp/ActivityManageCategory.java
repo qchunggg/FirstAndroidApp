@@ -48,7 +48,21 @@ public class ActivityManageCategory extends AppCompatActivity {
 
         getCategoriesFromFirebase();
 
-        adapter = new CategoryAdapter(categoryList);
+        adapter = new CategoryAdapter(
+                categoryList,
+
+                // OnEditClickListener
+                category -> {
+                    int position = categoryList.indexOf(category);
+                    showEditCategoryDialog(category, position);
+                },
+
+                // OnCategoryActionListener
+                (category, position) -> {
+                    showDeleteConfirmationDialog(category);
+                }
+        );
+
         rvCategories.setAdapter(adapter);
 
         // Thêm sự kiện cho nút back
@@ -66,6 +80,8 @@ public class ActivityManageCategory extends AppCompatActivity {
 //        Thêm sự kiện cho nút Add
         ImageView ivAdd = findViewById(R.id.ivAdd);
         ivAdd.setOnClickListener(v -> showAddCategoryDialog());
+
+
     }
 
     private void getCategoriesFromFirebase() {
@@ -74,13 +90,14 @@ public class ActivityManageCategory extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 categoryList.clear();
                 for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
+                    String key = categorySnapshot.getKey();  //  Lấy key
                     String title = categorySnapshot.child("title").getValue(String.class);
                     Integer iconResId = categorySnapshot.child("iconResId").getValue(Integer.class);
-                    if (iconResId == null) {
-                        iconResId = 0;
-                    }
-                    Log.d("FirebaseData", "Title: " + title + ", iconResId: " + iconResId);
-                    categoryList.add(new CategoryModel(title, iconResId));
+                    if (iconResId == null) iconResId = 0;
+
+                    CategoryModel category = new CategoryModel(title, iconResId);
+                    category.setKey(key);  //  Gán key vào model
+                    categoryList.add(category);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -172,4 +189,126 @@ public class ActivityManageCategory extends AppCompatActivity {
             dialog.dismiss();
         });
     }
+
+    public void showEditCategoryDialog(CategoryModel category, int position) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_design_category, null);
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        final android.app.AlertDialog dialog = builder.setView(dialogView).create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getWindow().setLayout(
+                    (int) (getResources().getDisplayMetrics().widthPixels * 0.85),
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        });
+
+        dialog.show();
+
+        EditText etCategoryName = dialogView.findViewById(R.id.etCategoryName);
+        GridLayout glIcons = dialogView.findViewById(R.id.glIcons);
+        Button btnEdit = dialogView.findViewById(R.id.btnAddCategory); // Button sửa
+
+        // Gán giá trị ban đầu
+        etCategoryName.setText(category.getTitle());
+        final int[] selectedIconResId = {category.getIconResId()};
+
+        // Đánh dấu icon đã chọn (tùy chọn)
+        for (int i = 0; i < glIcons.getChildCount(); i++) {
+            View iconView = glIcons.getChildAt(i);
+            if (iconView instanceof ImageButton) {
+                int id = iconView.getId();
+                if (id == R.id.icon1) iconView.setTag(R.drawable.ic_study);
+                else if (id == R.id.icon2) iconView.setTag(R.drawable.ic_guitar);
+                else if (id == R.id.icon3) iconView.setTag(R.drawable.ic_sport);
+                else if (id == R.id.icon4) iconView.setTag(R.drawable.ic_setting);
+                else if (id == R.id.icon5) iconView.setTag(R.drawable.ic_flag);
+                else if (id == R.id.icon6) iconView.setTag(R.drawable.ic_present);
+                else if (id == R.id.icon7) iconView.setTag(R.drawable.ic_volunteer_activity);
+                else if (id == R.id.icon8) iconView.setTag(R.drawable.ic_music);
+
+                int resId = (int) iconView.getTag();
+                if (resId == category.getIconResId()) {
+                    iconView.setBackgroundResource(R.drawable.bg_icon_selected); // tô viền icon hiện tại
+                } else {
+                    iconView.setBackground(null);
+                }
+
+                iconView.setOnClickListener(v -> {
+                    selectedIconResId[0] = (int) v.getTag();
+                    // Reset viền toàn bộ icon
+                    for (int j = 0; j < glIcons.getChildCount(); j++) {
+                        View other = glIcons.getChildAt(j);
+                        other.setBackground(null);
+                    }
+                    v.setBackgroundResource(R.drawable.bg_icon_selected);
+                });
+            }
+        }
+
+        // Sự kiện nút “Sửa”
+        btnEdit.setOnClickListener(view -> {
+            String newTitle = etCategoryName.getText().toString().trim();
+            if (newTitle.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Cập nhật model tại vị trí position
+            category.setTitle(newTitle);
+            category.setIconResId(selectedIconResId[0]);
+
+            String key = category.getKey();
+            if (key != null) {
+                database.child(key).setValue(category)
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(this, "Đã sửa danh mục", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Lỗi khi sửa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+            } else {
+                Toast.makeText(this, "Không tìm thấy key của danh mục", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+//    Xoá
+private void showDeleteConfirmationDialog(CategoryModel category) {
+    View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_remove_category, null);
+
+    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    final android.app.AlertDialog dialog = builder.setView(dialogView).create();
+
+    // Ánh xạ các nút
+    Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+    Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+
+    // Nút "Hủy"
+    btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+    // Nút "Đồng ý" - Xóa danh mục trên Firebase
+    btnConfirm.setOnClickListener(v -> {
+        String key = category.getKey();
+        if (key != null) {
+            database.child(key).removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Đã xóa danh mục", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    });
+        } else {
+            Toast.makeText(this, "Không tìm thấy key để xóa", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        }
+    });
+
+    dialog.show();
+}
+
+
 }
