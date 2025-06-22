@@ -137,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        // Clear session khi app bị tắt từ đa nhiệm
-        mAuth.signOut(); // Đăng xuất người dùng
+
     }
 
     // Phương thức hiển thị menu khi nhấn vào ic_menu
