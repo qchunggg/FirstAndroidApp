@@ -108,54 +108,50 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        FirebaseAuth.getInstance().signOut();
+
         // Đăng nhập
         mAuth.signInWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
-                    // Đăng nhập thành công, chuyển sang MainActivity hoặc AdminActivity
-                    if (isAdmin(authResult.getUser().getEmail())) {
-                        startActivity(new Intent(LoginActivity.this, AdminActivity.class)); // Chuyển tới AdminActivity nếu là admin
-                    } else {
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class)); // Hoặc MainActivity nếu là người dùng bình thường
-                    }
-                    finish(); // Đóng LoginActivity
+                    String uid = authResult.getUser().getUid(); // Lấy UID
+                    checkIfAdmin(uid); // Gọi kiểm tra từ Realtime Database
                 })
                 .addOnFailureListener(e -> {
-                    // Ghi log chi tiết lỗi để dễ debug
                     Log.e("LoginError", "Error: " + e.getMessage());
                     Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
     // Hàm kiểm tra admin
-    private void checkIfAdmin(String email) {
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-        usersRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void checkIfAdmin(String uid) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        boolean isAdmin = snapshot.child("isAdmin").getValue(Boolean.class);
-                        if (isAdmin) {
-                            // Nếu là admin, chuyển đến AdminActivity
-                            startActivity(new Intent(LoginActivity.this, AdminActivity.class));
-                        } else {
-                            // Nếu là user, chuyển đến MainActivity
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        }
-                        finish();
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Boolean isAdmin = snapshot.child("isAdmin").getValue(Boolean.class);
+
+                    if (isAdmin != null && isAdmin) {
+                        Log.d("AuthCheck", "Đăng nhập với quyền admin.");
+                        startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+                    } else {
+                        Log.d("AuthCheck", "Đăng nhập với quyền người dùng.");
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }
+                    finish();
+                } else {
+                    Log.w("AuthCheck", "Không tìm thấy user trong Realtime Database.");
+                    Toast.makeText(LoginActivity.this, "Tài khoản chưa được đăng ký trong hệ thống!", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("FirebaseError", "Error checking admin: " + databaseError.getMessage());
+            public void onCancelled(DatabaseError error) {
+                Log.e("FirebaseError", "Lỗi khi kiểm tra quyền admin: " + error.getMessage());
+                Toast.makeText(LoginActivity.this, "Lỗi hệ thống: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private boolean isAdmin(String email) {
-        // Kiểm tra email admin (hoặc bạn có thể kiểm tra từ Firestore/Realtime Database)
-        return email.equals("admin@tlu.edu.vn");
-    }
 }

@@ -25,11 +25,11 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    // 1. Khai báo Firebase
+    // 1. Firebase
     private FirebaseAuth mAuth;
     private DatabaseReference dbRef;
 
-    // 2. Khai báo View
+    // 2. Views
     private EditText etEmail, etPassword, etConfirmPassword;
     private MaterialButton btnRegister;
     private boolean isPasswordVisible = false;
@@ -50,24 +50,22 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
-
-        // Ánh xạ “Đăng nhập”
         TextView tvLogin = findViewById(R.id.tvLogin);
 
-        // Đặt mật khẩu mặc định là ẩn và cập nhật biểu tượng
+        // Mặc định ẩn mật khẩu
         etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         etPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, R.drawable.ic_visibility_off, 0);
         etConfirmPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         etConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, R.drawable.ic_visibility_off, 0);
 
-        // Set up password visibility toggle
+        // Hiển thị/ẩn mật khẩu khi nhấn icon
         setupPasswordVisibilityToggle(etPassword, R.drawable.ic_visibility_off, R.drawable.ic_visibility);
         setupPasswordVisibilityToggle(etConfirmPassword, R.drawable.ic_visibility_off, R.drawable.ic_visibility);
 
-        // Xử lý nút Đăng ký
+        // Đăng ký
         btnRegister.setOnClickListener(v -> registerUser());
 
-        // Xử lý nút Đăng nhập
+        // Chuyển sang Đăng nhập
         tvLogin.setOnClickListener(v -> {
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             finish();
@@ -83,19 +81,13 @@ public class RegisterActivity extends AppCompatActivity {
                     if (isVisible) {
                         editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
                         editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, visibilityOffIcon, 0);
-                        if (editText == etPassword) {
-                            isPasswordVisible = false;
-                        } else {
-                            isConfirmPasswordVisible = false;
-                        }
+                        if (editText == etPassword) isPasswordVisible = false;
+                        else isConfirmPasswordVisible = false;
                     } else {
                         editText.setTransformationMethod(SingleLineTransformationMethod.getInstance());
                         editText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_password, 0, visibilityOnIcon, 0);
-                        if (editText == etPassword) {
-                            isPasswordVisible = true;
-                        } else {
-                            isConfirmPasswordVisible = true;
-                        }
+                        if (editText == etPassword) isPasswordVisible = true;
+                        else isConfirmPasswordVisible = true;
                     }
                     editText.setSelection(editText.getText().length());
                     return true;
@@ -110,7 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
         String pass = etPassword.getText().toString();
         String confirm = etConfirmPassword.getText().toString();
 
-        // Validate input
+        // Kiểm tra nhập
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Nhập email");
             return;
@@ -124,30 +116,26 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Tạo user trên FirebaseAuth
+        // Tạo tài khoản Firebase
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
                     String uid = authResult.getUser().getUid();
+
+                    // Tạo dữ liệu lưu vào Realtime Database
                     Map<String, Object> userProfile = new HashMap<>();
                     userProfile.put("email", email);
                     userProfile.put("createdAt", System.currentTimeMillis());
+                    userProfile.put("isAdmin", false); // ✅ user thường mặc định
 
-                    // Lưu profile vào Realtime Database
                     dbRef.child(uid)
                             .setValue(userProfile)
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                // Sau khi đăng ký thành công, chuyển sang màn Đăng nhập
-                                startActivity(new Intent(this, LoginActivity.class)); // Chuyển đến LoginActivity
-                                finish(); // Đóng màn hình Đăng ký
+                                startActivity(new Intent(this, LoginActivity.class));
+                                finish();
                             })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(this, "Lưu hồ sơ thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                            );
+                            .addOnFailureListener(e -> Toast.makeText(this, "Lưu hồ sơ thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                );
+                .addOnFailureListener(e -> Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
-
 }
