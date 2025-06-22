@@ -87,20 +87,20 @@ public class AccountFragment extends Fragment {
         profileRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    User user = snapshot.getValue(User.class);
-                    if (user != null) {
-                        tvStudentId.setText("Mã sinh viên: " + user.getStudentId());
-                        tvClass.setText(user.getClassName());
-                        tvDepartment.setText(user.getDepartment());
-                        tvPoints.setText(user.getAccumulatedPoints());
-                        tvPhone.setText(user.getPhoneNumber());
-                        tvSemesterRank.setText(user.getSemesterRank());
-                        tvYearRank.setText(user.getYearRank());
-                    }
-                } else {
-                    Log.w("AccountFragment", "Không tìm thấy profile với UID: " + userId);
-                }
+//                if (snapshot.exists()) {
+//                    User user = snapshot.getValue(User.class);
+//                    if (user != null) {
+//                        tvStudentId.setText("Mã sinh viên: " + user.getStudentId());
+//                        tvClass.setText(user.getClassName());
+//                        tvDepartment.setText(user.getDepartment());
+//                        tvPoints.setText(user.getAccumulatedPoints());
+//                        tvPhone.setText(user.getPhoneNumber());
+//                        tvSemesterRank.setText(user.getSemesterRank());
+//                        tvYearRank.setText(user.getYearRank());
+//                    }
+//                } else {
+//                    Log.w("AccountFragment", "Không tìm thấy profile với UID: " + userId);
+//                }
             }
 
             @Override

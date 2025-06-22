@@ -32,7 +32,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         CategoryModel category = categoryList.get(position);
 
-        Log.d("CategoryAdapter", "Category Name: " + category.getTitle());
 
         holder.tvCategoryName.setText(category.getTitle());
 
@@ -44,6 +43,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             holder.ivIcon.setImageResource(category.getIconResId());
             Log.d("IconDebug", "Using custom icon: " + category.getIconResId());
         }
+
+        holder.ivEdit.setOnClickListener(v -> {
+            if (editClickListener != null) {
+                editClickListener.onEditClick(categoryList.get(position));
+            }
+        });
     }
 
     @Override
@@ -55,10 +60,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         TextView tvCategoryName;
         ImageView ivIcon;
 
+        ImageView ivEdit;
+
         public CategoryViewHolder(View itemView) {
             super(itemView);
             tvCategoryName = itemView.findViewById(R.id.tvTitle);
             ivIcon = itemView.findViewById(R.id.ivIcon);
+            ivEdit = itemView.findViewById(R.id.ivEdit);
         }
+    }
+
+
+    public interface OnEditClickListener {
+        void onEditClick(CategoryModel category);
+    }
+
+    private OnEditClickListener editClickListener;
+
+    public CategoryAdapter(List<CategoryModel> categoryList, OnEditClickListener listener) {
+        this.categoryList = categoryList;
+        this.editClickListener = listener;
     }
 }
