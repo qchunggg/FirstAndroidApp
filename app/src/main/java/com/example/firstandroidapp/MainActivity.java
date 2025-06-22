@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private void showMenu() {
         // Inflate layout menu từ XML
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View menuView = inflater.inflate(R.layout.setting, null);  // menu_layout là layout bạn đã cung cấp
+        View menuView = inflater.inflate(R.layout.nav_menu, null);  // menu_layout là layout bạn đã cung cấp
 
         // Tạo PopupWindow với layout đã tạo
         popupWindow = new PopupWindow(menuView, 550, LinearLayout.LayoutParams.MATCH_PARENT, true);  // Đã thay đổi chiều rộng thành 350dp
@@ -153,11 +153,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Ánh xạ các mục trong menu và thiết lập sự kiện click
         menuView.findViewById(R.id.menu_edit_profile).setOnClickListener(v -> {
-            // Khi người dùng nhấn vào "Chỉnh sửa hồ sơ", chuyển đến EditProfileActivity
-            Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);  // Chuyển sang EditProfileActivity
+            // Chuyển ngay đến EditProfileActivity mà không cần kiểm tra đăng nhập
+            Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);  // Chuyển tới EditProfileActivity
             startActivity(intent);  // Mở EditProfileActivity
             popupWindow.dismiss();  // Đóng menu sau khi click
         });
+
 
         menuView.findViewById(R.id.menu_change_password).setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // **Đăng xuất**: Khi người dùng nhấn vào "Đăng xuất"
-        menuView.findViewById(R.id.menu_logout).setOnClickListener(v -> {
+        menuView.findViewById(R.id.logout).setOnClickListener(v -> {
             // Đăng xuất người dùng
             mAuth.signOut();
 
