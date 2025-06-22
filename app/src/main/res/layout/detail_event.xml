@@ -8,7 +8,8 @@
     android:paddingStart="22dp"
     android:paddingEnd="22dp"
     android:paddingBottom="20dp"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true">
 
     <!-- Toolbar -->
     <ImageView
@@ -29,7 +30,7 @@
         android:gravity="center"
         app:layout_constraintStart_toEndOf="@id/ivBack"
         app:layout_constraintTop_toTopOf="parent"
-        android:fitsSystemWindows="true"/>
+        />
 
 
 
