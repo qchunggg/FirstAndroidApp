@@ -140,7 +140,7 @@ public class HistoryFragment extends Fragment {
     private void showPopupMenu(View anchor) {
         View popupView = LayoutInflater.from(getContext()).inflate(R.layout.nav_menu, null);
 
-        int popupWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
+        int popupWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.5);
 
         PopupWindow popupWindow = new PopupWindow(
                 popupView,
