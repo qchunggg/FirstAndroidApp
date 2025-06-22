@@ -93,10 +93,7 @@ public class AccountFragment extends Fragment {
                         tvStudentId.setText("Mã sinh viên: " + user.getStudentId());
                         tvClass.setText(user.getClassName());
                         tvDepartment.setText(user.getDepartment());
-                        tvPoints.setText(user.getAccumulatedPoints());
-                        tvPhone.setText(user.getPhoneNumber());
-                        tvSemesterRank.setText(user.getSemesterRank());
-                        tvYearRank.setText(user.getYearRank());
+
                     }
                 } else {
                     Log.w("AccountFragment", "Không tìm thấy profile với UID: " + userId);

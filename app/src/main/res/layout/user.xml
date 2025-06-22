@@ -13,8 +13,7 @@
         android:orientation="horizontal"
         android:padding="16dp"
         android:background="#FFFFFF"
-        android:gravity="center_vertical"
-        >
+        android:gravity="center_vertical">
 
         <!-- Icon Menu -->
         <ImageView
@@ -22,8 +21,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_menu"
-            />
+            android:src="@drawable/ic_menu" />
 
         <!-- Title -->
         <TextView
@@ -35,15 +33,14 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:gravity="center" /> <!-- Căn giữa nội dung -->
+            android:gravity="center" />
 
         <!-- Icon Search -->
         <ImageView
             android:id="@+id/ivSearch"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_search"
-            />
+            android:src="@drawable/ic_search" />
     </LinearLayout>
 
     <!-- Tiêu đề -->
@@ -60,6 +57,7 @@
 
     <!-- Avatar -->
     <ImageView
+        android:id="@+id/ivAvatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
@@ -75,7 +73,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
+        <EditText
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,16 +81,20 @@
             android:text="Nguyễn Văn A"
             android:textColor="#141414"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@android:color/white"
+            android:hint="Tên người dùng" />
 
-        <TextView
+        <EditText
             android:id="@+id/tvStudentId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mã sinh viên: 225123456"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@android:color/white"
+            android:hint="Mã sinh viên" />
     </LinearLayout>
 
     <!-- Thông tin cá nhân -->
@@ -120,13 +122,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvClass"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="64CNTT3"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Lớp học" />
         </LinearLayout>
 
         <!-- Khoa -->
@@ -144,13 +148,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvDepartment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Công nghệ thông tin"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Khoa" />
         </LinearLayout>
 
         <!-- Điểm tích lũy -->
@@ -168,13 +174,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvPoints"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1.250"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Điểm tích lũy" />
         </LinearLayout>
 
         <!-- Số điện thoại -->
@@ -192,13 +200,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+84 987654321"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Số điện thoại" />
         </LinearLayout>
 
         <!-- Xếp hạng học kỳ -->
@@ -216,13 +226,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvSemesterRank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Xếp hạng học kỳ" />
         </LinearLayout>
 
         <!-- Xếp hạng năm -->
@@ -239,13 +251,15 @@
                 android:textColor="#71757D"
                 android:textSize="16sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/tvYearRank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20"
                 android:textColor="#141414"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:background="@android:color/white"
+                android:hint="Xếp hạng năm" />
         </LinearLayout>
     </LinearLayout>
 
