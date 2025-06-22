@@ -3,7 +3,7 @@ package com.example.firstandroidapp;
 import java.io.Serializable;
 
 public class ActivityModel implements Serializable {
-
+    private String key;
     private String name;
     private String type;
     private String description;
@@ -30,6 +30,7 @@ public class ActivityModel implements Serializable {
         this.location = "Hội trường T45";  // Giá trị mặc định
     }
 
+
     // Constructor cho detail_event (cần thông tin đầy đủ)
     public ActivityModel(String name, String type, String description, String time, String quantity, String eventOrganizer, String location) {
         this.name = name;
@@ -40,6 +41,14 @@ public class ActivityModel implements Serializable {
         this.thumbnailResId = 0;  // Đặt giá trị mặc định cho thumbnailResId
         this.eventOrganizer = eventOrganizer;
         this.location = location;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     // Getters and Setters

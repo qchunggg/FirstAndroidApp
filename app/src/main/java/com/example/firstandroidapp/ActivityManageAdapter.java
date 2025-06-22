@@ -14,9 +14,12 @@ import java.util.List;
 public class ActivityManageAdapter extends RecyclerView.Adapter<ActivityManageAdapter.ActivityViewHolder> {
 
     private List<ActivityModel> activityList;
+    private OnActivityActionListener actionListener;  // Khai báo actionListener
 
-    public ActivityManageAdapter(List<ActivityModel> activityList) {
+    // Constructor nhận vào actionListener
+    public ActivityManageAdapter(List<ActivityModel> activityList, OnActivityActionListener actionListener) {
         this.activityList = activityList;
+        this.actionListener = actionListener;  // Khởi tạo actionListener
     }
 
     @NonNull
@@ -32,7 +35,13 @@ public class ActivityManageAdapter extends RecyclerView.Adapter<ActivityManageAd
         ActivityModel activity = activityList.get(position);
         holder.tvTitle.setText(activity.getName());
         holder.tvDate.setText(activity.getTime());
-        // TODO: xử lý thêm icon Sửa/Xoá nếu muốn
+
+        holder.ivDelete.setOnClickListener(v -> {
+            // Gọi phương thức xóa khi nhấn nút xóa
+            if (actionListener != null) {
+                actionListener.onDelete(activity);  // Truyền activity vào phương thức onDelete
+            }
+        });
     }
 
     @Override
@@ -47,10 +56,15 @@ public class ActivityManageAdapter extends RecyclerView.Adapter<ActivityManageAd
 
         public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle); // cần chỉnh lại id trong XML
-            tvDate = itemView.findViewById(R.id.tvDate);   // cần chỉnh lại id trong XML
-            ivEdit = itemView.findViewById(R.id.ivEdit);   // nếu có chức năng sửa
-            ivDelete = itemView.findViewById(R.id.ivDelete); // nếu có chức năng xoá
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            ivEdit = itemView.findViewById(R.id.ivEdit);
+            ivDelete = itemView.findViewById(R.id.ivDelete);
         }
+    }
+
+    // Interface để lắng nghe sự kiện xóa
+    public interface OnActivityActionListener {
+        void onDelete(ActivityModel activity);  // Phương thức xóa hoạt động
     }
 }
