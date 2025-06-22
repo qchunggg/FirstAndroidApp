@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private void showMenu() {
         // Inflate layout menu từ XML
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View menuView = inflater.inflate(R.layout.setting_user, null);  // menu_layout là layout bạn đã cung cấp
+        View menuView = inflater.inflate(R.layout.setting, null);  // menu_layout là layout bạn đã cung cấp
 
         // Tạo PopupWindow với layout đã tạo
         popupWindow = new PopupWindow(menuView, 550, LinearLayout.LayoutParams.MATCH_PARENT, true);  // Đã thay đổi chiều rộng thành 350dp
