@@ -15,9 +15,15 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private List<CategoryModel> categoryList;
+    private OnEditClickListener editClickListener;
+    private OnCategoryActionListener actionListener;
 
-    public CategoryAdapter(List<CategoryModel> categoryList) {
+    public CategoryAdapter(List<CategoryModel> categoryList,
+                           OnEditClickListener editClickListener,
+                           OnCategoryActionListener actionListener) {
         this.categoryList = categoryList;
+        this.editClickListener = editClickListener;
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -32,21 +38,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         CategoryModel category = categoryList.get(position);
 
-
         holder.tvCategoryName.setText(category.getTitle());
 
-        // Sử dụng ic_default_icon khi iconResId = 0, ngược lại dùng iconResId từ dữ liệu
         if (category.getIconResId() == 0) {
             holder.ivIcon.setImageResource(R.drawable.ic_default_icon);
-            Log.d("IconDebug", "Using ic_default_icon");
         } else {
             holder.ivIcon.setImageResource(category.getIconResId());
-            Log.d("IconDebug", "Using custom icon: " + category.getIconResId());
         }
 
         holder.ivEdit.setOnClickListener(v -> {
             if (editClickListener != null) {
-                editClickListener.onEditClick(categoryList.get(position));
+                editClickListener.onEditClick(category);
+            }
+        });
+
+        holder.ivDelete.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onDelete(category, position);
             }
         });
     }
@@ -58,27 +66,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategoryName;
-        ImageView ivIcon;
-
-        ImageView ivEdit;
+        ImageView ivIcon, ivEdit, ivDelete;
 
         public CategoryViewHolder(View itemView) {
             super(itemView);
             tvCategoryName = itemView.findViewById(R.id.tvTitle);
             ivIcon = itemView.findViewById(R.id.ivIcon);
             ivEdit = itemView.findViewById(R.id.ivEdit);
+            ivDelete = itemView.findViewById(R.id.ivDelete);
         }
     }
-
 
     public interface OnEditClickListener {
         void onEditClick(CategoryModel category);
     }
 
-    private OnEditClickListener editClickListener;
-
-    public CategoryAdapter(List<CategoryModel> categoryList, OnEditClickListener listener) {
-        this.categoryList = categoryList;
-        this.editClickListener = listener;
+    public interface OnCategoryActionListener {
+        void onDelete(CategoryModel category, int position);
     }
 }

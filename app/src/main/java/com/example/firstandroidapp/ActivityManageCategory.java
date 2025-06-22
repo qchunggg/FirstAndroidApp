@@ -48,10 +48,21 @@ public class ActivityManageCategory extends AppCompatActivity {
 
         getCategoriesFromFirebase();
 
-        adapter = new CategoryAdapter(categoryList, category -> {
-            int position = categoryList.indexOf(category);
-            showEditCategoryDialog(category, position); // Gọi dialog sửa
-        });
+        adapter = new CategoryAdapter(
+                categoryList,
+
+                // OnEditClickListener
+                category -> {
+                    int position = categoryList.indexOf(category);
+                    showEditCategoryDialog(category, position);
+                },
+
+                // OnCategoryActionListener
+                (category, position) -> {
+                    showDeleteConfirmationDialog(category);
+                }
+        );
+
         rvCategories.setAdapter(adapter);
 
         // Thêm sự kiện cho nút back
@@ -69,6 +80,8 @@ public class ActivityManageCategory extends AppCompatActivity {
 //        Thêm sự kiện cho nút Add
         ImageView ivAdd = findViewById(R.id.ivAdd);
         ivAdd.setOnClickListener(v -> showAddCategoryDialog());
+
+
     }
 
     private void getCategoriesFromFirebase() {
@@ -260,5 +273,42 @@ public class ActivityManageCategory extends AppCompatActivity {
             }
         });
     }
+
+//    Xoá
+private void showDeleteConfirmationDialog(CategoryModel category) {
+    View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_remove_category, null);
+
+    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+    final android.app.AlertDialog dialog = builder.setView(dialogView).create();
+
+    // Ánh xạ các nút
+    Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+    Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+
+    // Nút "Hủy"
+    btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+    // Nút "Đồng ý" - Xóa danh mục trên Firebase
+    btnConfirm.setOnClickListener(v -> {
+        String key = category.getKey();
+        if (key != null) {
+            database.child(key).removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Đã xóa danh mục", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    });
+        } else {
+            Toast.makeText(this, "Không tìm thấy key để xóa", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        }
+    });
+
+    dialog.show();
+}
+
 
 }
