@@ -7,7 +7,6 @@ import android.text.method.PasswordTransformationMethod;
 import android.text.method.SingleLineTransformationMethod;
 import android.text.TextUtils;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
 
     // 2. Views
-    private EditText etEmail, etPassword, etConfirmPassword;
+    private EditText etFullName, etEmail, etPassword, etConfirmPassword;
     private MaterialButton btnRegister;
     private boolean isPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
@@ -46,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference("users");
 
         // Ánh xạ View
+        etFullName = findViewById(R.id.etFullName); // Ánh xạ tên người dùng
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
@@ -98,11 +98,16 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+        String fullName = etFullName.getText().toString().trim();  // Lấy tên người dùng
         String email = etEmail.getText().toString().trim();
         String pass = etPassword.getText().toString();
         String confirm = etConfirmPassword.getText().toString();
 
         // Kiểm tra nhập
+        if (TextUtils.isEmpty(fullName)) {
+            etFullName.setError("Nhập tên");
+            return;
+        }
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Nhập email");
             return;
@@ -124,8 +129,9 @@ public class RegisterActivity extends AppCompatActivity {
                     // Tạo dữ liệu lưu vào Realtime Database
                     Map<String, Object> userProfile = new HashMap<>();
                     userProfile.put("email", email);
+                    userProfile.put("fullName", fullName);  // Lưu tên người dùng
                     userProfile.put("createdAt", System.currentTimeMillis());
-                    userProfile.put("isAdmin", false); // ✅ user thường mặc định
+                    userProfile.put("isAdmin", false); // user thường mặc định
 
                     dbRef.child(uid)
                             .setValue(userProfile)
