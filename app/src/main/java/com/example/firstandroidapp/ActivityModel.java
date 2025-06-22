@@ -1,6 +1,8 @@
 package com.example.firstandroidapp;
 
-public class ActivityModel {
+import java.io.Serializable;
+
+public class ActivityModel implements Serializable {
 
     private String name;
     private String type;

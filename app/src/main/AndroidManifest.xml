@@ -52,6 +52,11 @@
 <!--        Màn chi tiết hoạt động-->
         <activity android:name=".DetailEventActivity" />
 
+        <!-- Khai báo SearchActivity -->
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
+
 <!--        Màn admin dashboard-->
         <activity android:name=".AdminActivity" />
 
