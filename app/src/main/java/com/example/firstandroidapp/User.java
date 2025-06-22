@@ -1,7 +1,7 @@
 package com.example.firstandroidapp;
 
 public class User {
-    private String name;
+    private String userName;
     private String studentId;
     private String className;
     private String department;
@@ -12,8 +12,8 @@ public class User {
     }
 
     // Constructor với tất cả các tham số
-    public User(String name, String studentId, String className, String department, String phone) {
-        this.name = name;
+    public User(String userName, String studentId, String className, String department, String phone) {
+        this.userName = userName;
         this.studentId = studentId;
         this.className = className;
         this.department = department;
@@ -22,12 +22,13 @@ public class User {
 
     // Getter và Setter cho tất cả các trường
 
+
     public String getUserName() {
-        return name;
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getStudentId() {
