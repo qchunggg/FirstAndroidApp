@@ -18,7 +18,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public static final int EDIT_PROFILE_REQUEST_CODE = 1;
     private EditText etUserName, etStudentId, etClass, etDepartment, etPhone;
     private Button btnSave;
-    private String userId; // UID cố định
+    private String userId; // UID lấy từ Firebase
     private DatabaseReference profileRef;
 
     @Override
@@ -26,8 +26,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.design_infor);
 
-        // Sử dụng UID cố định cho người dùng
-        userId = "userID123"; // Thay thế bằng UID cố định mà bạn muốn sử dụng
+        // Lấy userId của người dùng hiện tại từ Firebase Authentication
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Tham chiếu đến "profile/userId" trong Firebase
         profileRef = FirebaseDatabase.getInstance().getReference("profile").child(userId);
@@ -58,20 +58,32 @@ public class EditProfileActivity extends AppCompatActivity {
                     etClass.setText(user.getClassName());
                     etDepartment.setText(user.getDepartment());
                     etPhone.setText(user.getPhone());
+                } else {
+                    Toast.makeText(this, "Không có dữ liệu người dùng", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(this, "Lỗi tải dữ liệu: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void saveUserData() {
-        String userName = etUserName.getText().toString();
-        String studentId = etStudentId.getText().toString();
-        String className = etClass.getText().toString();
-        String department = etDepartment.getText().toString();
-        String phone = etPhone.getText().toString();
+        String userName = etUserName.getText().toString().trim();
+        String studentId = etStudentId.getText().toString().trim();
+        String className = etClass.getText().toString().trim();
+        String department = etDepartment.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
 
+        // Kiểm tra dữ liệu đầu vào
+        if (userName.isEmpty() || studentId.isEmpty() || className.isEmpty() || department.isEmpty() || phone.isEmpty()) {
+            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Cập nhật đối tượng User
         User updatedUser = new User(userName, studentId, className, department, phone);
 
+        // Lưu dữ liệu vào Firebase
         profileRef.setValue(updatedUser).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
@@ -86,7 +98,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 setResult(RESULT_OK, resultIntent);
                 finish(); // Đóng activity sau khi trả kết quả
             } else {
-                Toast.makeText(this, "Cập nhật thất bại!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Cập nhật thất bại: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
