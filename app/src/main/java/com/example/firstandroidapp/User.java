@@ -5,30 +5,20 @@ public class User {
     private String studentId;
     private String className;
     private String department;
-    private String accumulatedPoints;
-    private String phoneNumber;
-    private String semesterRank;
-    private String yearRank;
-    private String avatarUrl;
+    private String phone;
 
+    // Constructor mặc định (Firebase yêu cầu có constructor mặc định)
     public User() {
-        // Constructor rỗng để Firebase có thể ánh xạ dữ liệu
     }
 
-    public User(String name, String studentId, String className, String department, String accumulatedPoints,
-                String phoneNumber, String semesterRank, String yearRank, String avatarUrl) {
-        this.name = name;
-        this.studentId = studentId;
+    // Constructor mới với các tham số className, department, và phone
+    public User(String className, String department, String phone) {
         this.className = className;
         this.department = department;
-        this.accumulatedPoints = accumulatedPoints;
-        this.phoneNumber = phoneNumber;
-        this.semesterRank = semesterRank;
-        this.yearRank = yearRank;
-        this.avatarUrl = avatarUrl;
+        this.phone = phone;
     }
 
-    // Getter và Setter cho các thuộc tính
+    // Getter và Setter cho tất cả các trường
     public String getName() {
         return name;
     }
@@ -61,43 +51,11 @@ public class User {
         this.department = department;
     }
 
-    public String getAccumulatedPoints() {
-        return accumulatedPoints;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setAccumulatedPoints(String accumulatedPoints) {
-        this.accumulatedPoints = accumulatedPoints;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getSemesterRank() {
-        return semesterRank;
-    }
-
-    public void setSemesterRank(String semesterRank) {
-        this.semesterRank = semesterRank;
-    }
-
-    public String getYearRank() {
-        return yearRank;
-    }
-
-    public void setYearRank(String yearRank) {
-        this.yearRank = yearRank;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
