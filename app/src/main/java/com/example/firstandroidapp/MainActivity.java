@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
                 showMenu();
             }
         });
+
+
+
     }
 
     private void setupClickListener(LinearLayout layout, Fragment fragment) {
@@ -136,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-
     }
 
     // Phương thức hiển thị menu khi nhấn vào ic_menu
@@ -157,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);  // Mở EditProfileActivity
             popupWindow.dismiss();  // Đóng menu sau khi click
         });
-
 
         menuView.findViewById(R.id.menu_change_password).setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Đổi mật khẩu", Toast.LENGTH_SHORT).show();
