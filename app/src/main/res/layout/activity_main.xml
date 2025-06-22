@@ -7,6 +7,8 @@
     android:orientation="vertical">
 
     <!-- AppBar -->
+    <!-- AppBar -->
+
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
@@ -19,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:fitsSystemWindows="true"
         >
 
         <!-- Icon Menu -->
@@ -40,7 +43,8 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:gravity="center" /> <!-- Căn giữa nội dung -->
+            android:gravity="center"
+            android:maxLines="1"/> <!-- Căn giữa nội dung -->
 
         <!-- Icon Search -->
         <ImageView
@@ -48,15 +52,16 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_search"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Search"
             />
     </LinearLayout>
-
-    <!-- Nội dung chính có thể cuộn -->
-
-    <!-- Bottom Navigation -->
     <ScrollView
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="30dp"
         android:layout_weight="1"
         android:background="#FFFFFF">
 
@@ -105,6 +110,7 @@
                         android:layout_height="52dp"
                         android:layout_weight="1"
                         android:backgroundTint="#369EFF"
+                        android:onClick="onExploreClick"
                         android:text="Khám phá hoạt động"
                         android:textColor="#FFFFFF"
                         android:textSize="11dp" />
@@ -198,8 +204,8 @@
                 android:id="@+id/clParticipatedSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="14dp"
                 android:layout_marginEnd="4dp"
                 android:background="@drawable/bg_upcoming_section"
                 android:paddingTop="16dp"
@@ -211,10 +217,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hoạt động đã tham gia"
-                    android:textStyle="bold"
                     android:textSize="16dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tvSeeMore"
@@ -223,10 +229,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Xem thêm"
-                    android:textColor="#006DC4"
                     android:textAllCaps="false"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    android:textColor="#006DC4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/countactivity"
                     style="@style/TextAppearance.MaterialComponents.Body2"
@@ -236,101 +243,101 @@
                     android:text="Bạn đã tham gia 0 hoạt động"
                     android:textColor="#666666"
                     android:textSize="14dp"
-                    app:layout_constraintTop_toBottomOf="@id/activitytext"
-                    app:layout_constraintStart_toStartOf="parent"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/countactivity"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_margin="5dp"
-                    />
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="8dp"-->
-<!--                    android:orientation="horizontal">-->
+                    app:layout_constraintTop_toBottomOf="@id/activitytext" />
 
-<!--                    &lt;!&ndash; Ví dụ 4 loại hoạt động; thay icon và text cho phù hợp &ndash;&gt;-->
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="vertical">-->
+                <!--                <androidx.recyclerview.widget.RecyclerView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/countactivity"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                    android:layout_margin="5dp"-->
+                <!--                    />-->
+                <!--                <LinearLayout-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="8dp"-->
+                <!--                    android:orientation="horizontal">-->
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="32dp"-->
-<!--                            android:layout_height="32dp"-->
-<!--                            android:src="@drawable/ic_category_volunteer" />-->
+                <!--                    &lt;!&ndash; Ví dụ 4 loại hoạt động; thay icon và text cho phù hợp &ndash;&gt;-->
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="vertical">-->
 
-<!--                        <TextView-->
-<!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="Tình nguyện" />-->
-<!--                    </LinearLayout>-->
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="32dp"-->
+                <!--                            android:layout_height="32dp"-->
+                <!--                            android:src="@drawable/ic_category_volunteer" />-->
 
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="vertical">-->
+                <!--                        <TextView-->
+                <!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:text="Tình nguyện" />-->
+                <!--                    </LinearLayout>-->
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="32dp"-->
-<!--                            android:layout_height="32dp"-->
-<!--                            android:src="@drawable/ic_category_academic" />-->
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="vertical">-->
 
-<!--                        <TextView-->
-<!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="Học thuật" />-->
-<!--                    </LinearLayout>-->
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="32dp"-->
+                <!--                            android:layout_height="32dp"-->
+                <!--                            android:src="@drawable/ic_category_academic" />-->
 
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="vertical">-->
+                <!--                        <TextView-->
+                <!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:text="Học thuật" />-->
+                <!--                    </LinearLayout>-->
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="32dp"-->
-<!--                            android:layout_height="32dp"-->
-<!--                            android:src="@drawable/ic_category_music" />-->
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="vertical">-->
 
-<!--                        <TextView-->
-<!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="Âm nhạc" />-->
-<!--                    </LinearLayout>-->
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="32dp"-->
+                <!--                            android:layout_height="32dp"-->
+                <!--                            android:src="@drawable/ic_category_music" />-->
 
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="vertical">-->
+                <!--                        <TextView-->
+                <!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:text="Âm nhạc" />-->
+                <!--                    </LinearLayout>-->
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="32dp"-->
-<!--                            android:layout_height="32dp"-->
-<!--                            android:src="@drawable/ic_category_sport" />-->
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="vertical">-->
 
-<!--                        <TextView-->
-<!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:text="Thể thao" />-->
-<!--                    </LinearLayout>-->
-<!--                </LinearLayout>-->
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="32dp"-->
+                <!--                            android:layout_height="32dp"-->
+                <!--                            android:src="@drawable/ic_category_sport" />-->
+
+                <!--                        <TextView-->
+                <!--                            style="@style/TextAppearance.MaterialComponents.Caption"-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:text="Thể thao" />-->
+                <!--                    </LinearLayout>-->
+                <!--                </LinearLayout>-->
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

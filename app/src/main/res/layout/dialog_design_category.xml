@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="12dp"
-    android:layout_gravity="center"
-    android:background="@drawable/bg_popup_rounded">
+    android:background="@drawable/bg_popup_rounded"
+    android:gravity="center_horizontal">
 
     <!-- Tiêu đề -->
     <TextView
@@ -54,59 +54,65 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_study"/>
         <ImageButton
             android:id="@+id/icon2"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_guitar"/>
         <ImageButton
             android:id="@+id/icon3"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_sport"/>
         <ImageButton
             android:id="@+id/icon4"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_setting"/>
         <ImageButton
             android:id="@+id/icon5"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_flag"/>
         <ImageButton
             android:id="@+id/icon6"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_present"/>
         <ImageButton
             android:id="@+id/icon7"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_volunteer_activity"/>
         <ImageButton
             android:id="@+id/icon8"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@android:color/transparent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_music"/>
-        <!-- copy + chỉnh id/src cho icon2..icon8 -->
-        <!-- ... -->
     </GridLayout>
 
     <!-- Nút Thêm mới -->

@@ -62,7 +62,11 @@
 
         <!--        Màn quản lý danh mục-->
         <activity android:name=".ActivityManageCategory" />
+
         <activity android:name=".ActivitiesManageActivity" />
+
+        <activity android:name=".EditProfileActivity" />
+
     </application>
 
 </manifest>
