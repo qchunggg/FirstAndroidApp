@@ -3,66 +3,67 @@ package com.example.firstandroidapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingViewHolder> {
-
+public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHolder> {
     private List<RankingItem> rankingList;
+    private String pointsType;
 
-    // Constructor
-    public RankingAdapter(List<RankingItem> rankingList) {
+    public RankingAdapter(List<RankingItem> rankingList, String pointsType) {
         this.rankingList = rankingList;
+        this.pointsType = pointsType;
     }
 
     @Override
-    public RankingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflate the layout for each item
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_rating, parent, false); // Ensure layout is correct
-        return new RankingViewHolder(itemView);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rating, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RankingViewHolder holder, int position) {
-        // Get the current item
+    public void onBindViewHolder(ViewHolder holder, int position) {
         RankingItem item = rankingList.get(position);
 
-        // Update rank
-        holder.tvRank.setText(String.valueOf(position + 1));  // Rank starts from 1
-
+        holder.tvRank.setText(String.valueOf(position + 1));
         holder.tvUserName.setText(item.getUserName());
         holder.tvUserId.setText(item.getUserId());
-        holder.tvPoints.setText(String.valueOf(item.getPoints()));
 
-        // Set profile picture (adjust based on actual resource)
-        holder.ivProfilePic.setImageResource(R.drawable.ic_profile);  // Replace with actual image
+        // Lấy điểm theo loại điểm và hiển thị
+        int points = getPointsByType(item, pointsType);
+        holder.tvPoints.setText(points + " điểm");
     }
 
     @Override
     public int getItemCount() {
-        return rankingList.size();  // Return the number of items in the list
+        return rankingList.size();
     }
 
-    // ViewHolder for each item
-    public static class RankingViewHolder extends RecyclerView.ViewHolder {
+    private int getPointsByType(RankingItem item, String pointsType) {
+        switch (pointsType) {
+            case "points1":
+                return item.getPoints1();
+            case "points2":
+                return item.getPoints2();
+            case "points3":
+                return item.getPoints3();
+            default:
+                return 0;
+        }
+    }
 
-        public TextView tvRank, tvUserName, tvUserId, tvPoints;
-        public ImageView ivProfilePic;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvRank, tvUserName, tvUserId, tvPoints;
 
-        public RankingViewHolder(View itemView) {
-            super(itemView);
-
-            // Initialize views
-            tvRank = itemView.findViewById(R.id.tvRank);
-            tvUserName = itemView.findViewById(R.id.tvUserName);
-            tvUserId = itemView.findViewById(R.id.tvUserId);
-            tvPoints = itemView.findViewById(R.id.tvPoints);
-            ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
+        public ViewHolder(View view) {
+            super(view);
+            tvRank = view.findViewById(R.id.tvRank);
+            tvUserName = view.findViewById(R.id.tvUserName);
+            tvUserId = view.findViewById(R.id.tvUserId);
+            tvPoints = view.findViewById(R.id.tvPoints);
         }
     }
 }
