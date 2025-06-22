@@ -28,7 +28,8 @@
         android:textStyle="bold"
         android:gravity="center"
         app:layout_constraintStart_toEndOf="@id/ivBack"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:fitsSystemWindows="true"/>
 
 
 

@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomeFragment extends Fragment {
 
-    private static final int EDIT_PROFILE_REQUEST_CODE = 1; // Mã yêu cầu để nhận kết quả từ EditProfileActivity
+    static final int EDIT_PROFILE_REQUEST_CODE = 1; // Mã yêu cầu để nhận kết quả từ EditProfileActivity
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,10 +75,17 @@ public class HomeFragment extends Fragment {
         LinearLayout editProfileLayout = popupView.findViewById(R.id.menu_edit_profile);
         if (editProfileLayout != null) {
             editProfileLayout.setOnClickListener(v -> {
-                // Chuyển sang màn hình chỉnh sửa hồ sơ
-                Intent intent = new Intent(getContext(), EditProfileActivity.class);
-                startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE); // Mở EditProfileActivity để sửa thông tin
-                popupWindow.dismiss();  // Đóng menu sau khi chọn
+                if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    // Nếu người dùng chưa đăng nhập, chuyển hướng đến màn hình đăng nhập
+                    Toast.makeText(getContext(), "Bạn chưa đăng nhập. Vui lòng đăng nhập trước.", Toast.LENGTH_SHORT).show();
+                    Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                } else {
+                    // Nếu người dùng đã đăng nhập, mở màn hình chỉnh sửa hồ sơ
+                    Intent intent = new Intent(getContext(), EditProfileActivity.class);
+                    startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE); // Mở EditProfileActivity để sửa thông tin
+                    popupWindow.dismiss();  // Đóng menu sau khi chọn
+                }
             });
         }
     }
@@ -90,29 +97,33 @@ public class HomeFragment extends Fragment {
 
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
             // Lấy dữ liệu sửa đổi từ EditProfileActivity
+            String updatedUserName = data.getStringExtra("updatedUserName");
+            String updatedStudentId = data.getStringExtra("updatedStudentId");
             String updatedClass = data.getStringExtra("updatedClass");
             String updatedDepartment = data.getStringExtra("updatedDepartment");
             String updatedPhoneNumber = data.getStringExtra("updatedPhoneNumber");
 
-
             // Cập nhật thông tin người dùng trong HomeFragment (ví dụ, cập nhật TextViews)
-            updateUserInfo(updatedClass, updatedDepartment, updatedPhoneNumber);
+            updateUserInfo(updatedUserName, updatedStudentId, updatedClass, updatedDepartment, updatedPhoneNumber);
         }
     }
 
     // Cập nhật thông tin người dùng trong HomeFragment
-    private void updateUserInfo(String updatedClass, String updatedDepartment, String updatedPhoneNumber
-                               ) {
+    private void updateUserInfo(String updatedUserName, String updatedStudentId, String updatedClass,
+                                String updatedDepartment, String updatedPhoneNumber) {
         // Ánh xạ TextViews và cập nhật thông tin
+        TextView tvUserName = getView().findViewById(R.id.tvUserName);
+        TextView tvStudentId = getView().findViewById(R.id.tvStudentId);
         TextView tvClass = getView().findViewById(R.id.tvClass);
         TextView tvDepartment = getView().findViewById(R.id.tvDepartment);
         TextView tvPhoneNumber = getView().findViewById(R.id.tvPhone);
 
-
+        // Cập nhật thông tin vào các TextViews
+        tvUserName.setText(updatedUserName);
+        tvStudentId.setText(updatedStudentId);
         tvClass.setText(updatedClass);
         tvDepartment.setText(updatedDepartment);
         tvPhoneNumber.setText(updatedPhoneNumber);
-
 
         Toast.makeText(getContext(), "Thông tin đã được cập nhật!", Toast.LENGTH_SHORT).show();
     }

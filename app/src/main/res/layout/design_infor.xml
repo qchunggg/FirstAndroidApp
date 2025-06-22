@@ -76,24 +76,28 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvUserName"
+        <EditText
+            android:id="@+id/etUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Nguyễn Văn A"
             android:textColor="#141414"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@android:color/white"
+            android:hint="Tên người dùng" />
 
-        <TextView
-            android:id="@+id/tvStudentId"
+        <EditText
+            android:id="@+id/etStudentId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mã sinh viên: 225123456"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@android:color/white"
+            android:hint="Mã sinh viên" />
     </LinearLayout>
 
     <!-- Thông tin cá nhân -->
@@ -187,6 +191,11 @@
                 android:inputType="phone" />
         </LinearLayout>
 
+
+
+        <!-- Xếp hạng năm -->
+
+
     </LinearLayout>
 
     <!-- Nút Xác nhận -->
@@ -201,4 +210,5 @@
         android:text="Xác nhận"
         android:textColor="#FFFFFF"
         android:textSize="18sp" />
+
 </LinearLayout>
