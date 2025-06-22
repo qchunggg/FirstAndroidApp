@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -24,11 +25,20 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate layout của fragment
         View view = inflater.inflate(R.layout.activity_main, container, false);
 
+        // Ánh xạ ImageView cho menu popup
         ImageView ivMenu = view.findViewById(R.id.ivMenu);
-
         ivMenu.setOnClickListener(v -> showPopupMenu(v));
+
+        // Ánh xạ Button cho bảng xếp hạng
+        Button btnRanking = view.findViewById(R.id.btnRanking);
+        btnRanking.setOnClickListener(v -> {
+            // Khi nhấn nút, chuyển sang RatingActivity
+            Intent intent = new Intent(getContext(), RatingActivity.class);
+            startActivity(intent);
+        });
 
         return view;
     }

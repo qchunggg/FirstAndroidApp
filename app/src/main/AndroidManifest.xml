@@ -66,6 +66,10 @@
         <activity android:name=".ActivitiesManageActivity" />
 
         <activity android:name=".EditProfileActivity" />
+        <activity android:name=".RatingActivity">
+            <!-- Các thuộc tính khác nếu cần -->
+        </activity>
+
 
     </application>
 
