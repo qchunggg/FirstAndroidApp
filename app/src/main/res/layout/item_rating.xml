@@ -50,7 +50,7 @@
             android:textColor="#888888"/>
     </LinearLayout>
 
-    <!-- Số điểm -->
+    <!-- Điểm (chỉ một loại) -->
     <TextView
         android:id="@+id/tvPoints"
         android:layout_width="wrap_content"
