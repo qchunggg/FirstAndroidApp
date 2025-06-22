@@ -14,5 +14,9 @@
         <item name="android:statusBarColor">@android:color/white</item> <!-- Thanh trạng thái màu trắng -->
     </style>
 
+    <style name="PopupAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_left</item>
+    </style>
 
 </resources>

@@ -10,10 +10,10 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label=""
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FirstAndroidAPP"
+        android:theme="@style/StatusBarStyle"
         tools:targetApi="31"
         android:name=".MyApp">
         <activity
@@ -48,16 +48,20 @@
                     android:pathPrefix="/resetPassword"/>
             </intent-filter>
         </activity>
-        <activity android:name=".EditProfileActivity"
-            android:exported="true">
-            <!-- Nếu bạn muốn activity này là một phần của lịch sử back stack -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
+<!--        Màn chi tiết hoạt động-->
+        <activity android:name=".DetailEventActivity" />
 
+        <!-- Khai báo SearchActivity -->
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
+
+<!--        Màn admin dashboard-->
+        <activity android:name=".AdminActivity" />
+
+        <!--        Màn quản lý danh mục-->
+        <activity android:name=".ActivityManageCategory" />
     </application>
 
 </manifest>

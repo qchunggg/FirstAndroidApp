@@ -42,7 +42,8 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:gravity="center" /> <!-- Căn giữa nội dung -->
+            android:gravity="center"
+            android:maxLines="1"/> <!-- Căn giữa nội dung -->
 
         <!-- Icon Search -->
         <ImageView
@@ -50,6 +51,9 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_search"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Search"
             />
     </LinearLayout>
 
