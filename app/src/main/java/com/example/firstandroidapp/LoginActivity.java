@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -126,8 +127,32 @@ public class LoginActivity extends AppCompatActivity {
                     checkIfAdmin(uid); // Gọi kiểm tra từ Realtime Database
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("LoginError", "Error: " + e.getMessage());
-                    Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+
+                    if (e instanceof FirebaseAuthException) {
+                        String errorCode = ((FirebaseAuthException) e).getErrorCode();
+
+                        Log.e("LoginErrorCode", "Firebase Auth Error: " + errorCode);
+                        switch (errorCode) {
+                            case "ERROR_USER_NOT_FOUND":
+                                Toast.makeText(this, "Đăng nhập thất bại: Tài khoản chưa được đăng ký", Toast.LENGTH_LONG).show();
+                                break;
+                            case "ERROR_WRONG_PASSWORD":
+                                Toast.makeText(this, "Đăng nhập thất bại: Email hoặc mật khẩu không chính xác", Toast.LENGTH_LONG).show();
+                                break;
+                            case "ERROR_INVALID_CREDENTIAL":
+                                Toast.makeText(this, "Đăng nhập thất bại: Email hoặc mật khẩu không chính xác", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "ERROR_INVALID_EMAIL":
+                                Toast.makeText(this, "Đăng nhập thất bại: Email không hợp lệ", Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                Toast.makeText(this, "Đăng nhập thất bại: Lỗi không xác định", Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(this, "Đăng nhập thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 

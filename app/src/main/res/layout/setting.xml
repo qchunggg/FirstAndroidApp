@@ -203,6 +203,7 @@
 
         <!-- Item: Đăng xuất -->
         <LinearLayout
+            android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:gravity="center_vertical"
