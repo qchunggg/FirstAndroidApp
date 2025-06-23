@@ -70,7 +70,8 @@
             <!-- Các thuộc tính khác nếu cần -->
         </activity>
 
-
+<!--        Cài đặt Admin-->
+        <activity android:name=".SettingManageActivity" />
     </application>
 
 </manifest>

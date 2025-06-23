@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -155,9 +156,56 @@ public class RegisterActivity extends AppCompatActivity {
                                 startActivity(new Intent(this, LoginActivity.class));
                                 finish();
                             })
-                            .addOnFailureListener(e -> progressDialog.dismiss());
+                            .addOnFailureListener(e -> {
+                                progressDialog.dismiss();
+
+                                if (e instanceof FirebaseAuthException) {
+                                    String errorCode = ((FirebaseAuthException) e).getErrorCode();
+
+                                    switch (errorCode) {
+                                        case "ERROR_EMAIL_ALREADY_IN_USE":
+                                            Toast.makeText(this, "Email đã được sử dụng", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case "ERROR_INVALID_EMAIL":
+                                            Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case "ERROR_WEAK_PASSWORD":
+                                            Toast.makeText(this, "Mật khẩu quá yếu", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        default:
+                                            Toast.makeText(this, "Đăng ký thất bại: " + errorCode, Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+                                } else {
+                                    Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                 })
-                .addOnFailureListener(e -> progressDialog.dismiss());
+                .addOnFailureListener(e -> {
+                    progressDialog.dismiss();
+
+                    if (e instanceof FirebaseAuthException) {
+                        String errorCode = ((FirebaseAuthException) e).getErrorCode();
+
+                        switch (errorCode) {
+                            case "ERROR_EMAIL_ALREADY_IN_USE":
+                                Toast.makeText(this, "Email đã được sử dụng", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "ERROR_INVALID_EMAIL":
+                                Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "ERROR_WEAK_PASSWORD":
+                                Toast.makeText(this, "Mật khẩu quá yếu", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Toast.makeText(this, "Đăng ký thất bại: " + errorCode, Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
 }
