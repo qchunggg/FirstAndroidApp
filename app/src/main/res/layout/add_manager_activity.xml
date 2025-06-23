@@ -63,19 +63,19 @@
                         android:text="Tên hoạt động" />
 
                     <EditText
-                        android:inputType="text"
-                        android:hint="Nhập tên hoạt động"
                         android:id="@+id/et_ten_hoat_dong"
-                        android:textColor="#333030"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginHorizontal="35dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/edit_text_border"
+                        android:hint="Nhập tên hoạt động"
+                        android:inputType="text"
                         android:paddingVertical="10dp"
                         android:paddingLeft="12dp"
-                        android:paddingRight="24dp" />
+                        android:paddingRight="24dp"
+                        android:textColor="#333030"
+                        android:textSize="16sp" />
 
                     <!-- Description field -->
                     <TextView
@@ -90,60 +90,47 @@
                         android:text="Mô tả chi tiết" />
 
                     <EditText
-                        android:inputType="text"
-                        android:hint="Nhập mô tả"
                         android:id="@+id/et_mo_ta"
-                        android:textColor="#333030"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginHorizontal="35dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="20dp"
                         android:background="@drawable/edit_text_border"
+                        android:hint="Nhập mô tả"
+                        android:inputType="text"
                         android:paddingVertical="10dp"
                         android:paddingLeft="12dp"
-                        android:paddingRight="24dp" />
+                        android:paddingRight="24dp"
+                        android:textColor="#333030"
+                        android:textSize="16sp" />
 
                     <!-- Category selection -->
                     <TextView
                         android:id="@+id/tv_danh_muc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="35dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="Danh mục"
                         android:textColor="#000000"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginStart="35dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Danh mục" />
+                        android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:id="@+id/ll_danh_muc"
+                    <Spinner
+                        android:id="@+id/spinner_category"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:background="@drawable/edit_text_border"
-                        android:paddingVertical="3dp"
-                        android:paddingHorizontal="12dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_height="48dp"
                         android:layout_marginHorizontal="35dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/tv_chon_danh_muc"
-                            android:textColor="#333030"
-                            android:textSize="16sp"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:layout_weight="1"
-                            android:text="Chọn danh mục" />
-                        <ImageView
-                            android:id="@+id/iv_list_category"
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:background="@drawable/ic_list_category"
-                            android:scaleType="fitXY" />
-                    </LinearLayout>
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_spinner_round"
+                        android:dropDownWidth="match_parent"
+                        android:overlapAnchor="false"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:popupBackground="@drawable/spinner_dropdown_popup_background" />
+
+
+
 
                     <!-- Time start field -->
                     <TextView
@@ -161,8 +148,8 @@
                         android:id="@+id/time_start_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
                         android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
                         <EditText
@@ -185,7 +172,8 @@
                             android:layout_width="38dp"
                             android:layout_height="38dp"
                             android:layout_gravity="center_vertical"
-                            android:scaleType="fitXY" />
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_calendar" />
                     </LinearLayout>
 
                     <!-- Time end field -->
@@ -204,8 +192,8 @@
                         android:id="@+id/time_end_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
                         android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
                         <EditText
@@ -228,7 +216,8 @@
                             android:layout_width="38dp"
                             android:layout_height="38dp"
                             android:layout_gravity="center_vertical"
-                            android:scaleType="fitXY" />
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_calendar" />
                     </LinearLayout>
 
                     <!-- Location field -->
@@ -244,19 +233,19 @@
                         android:text="Địa điểm" />
 
                     <EditText
-                        android:inputType="text"
-                        android:hint="Nhập địa điểm"
                         android:id="@+id/et_location"
-                        android:textColor="#333030"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginHorizontal="35dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/edit_text_border"
+                        android:hint="Nhập địa điểm"
+                        android:inputType="text"
                         android:paddingVertical="10dp"
                         android:paddingLeft="12dp"
-                        android:paddingRight="24dp" />
+                        android:paddingRight="24dp"
+                        android:textColor="#333030"
+                        android:textSize="16sp" />
 
                     <!-- Reward field -->
                     <TextView
@@ -271,19 +260,19 @@
                         android:text="Điểm thưởng" />
 
                     <EditText
-                        android:inputType="number"
-                        android:hint="Nhập điểm thưởng"
                         android:id="@+id/et_reward"
-                        android:textColor="#333030"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginHorizontal="35dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/edit_text_border"
+                        android:hint="Nhập điểm thưởng"
+                        android:inputType="number"
                         android:paddingVertical="10dp"
                         android:paddingLeft="12dp"
-                        android:paddingRight="24dp" />
+                        android:paddingRight="24dp"
+                        android:textColor="#333030"
+                        android:textSize="16sp" />
 
                     <!-- Participation limit field -->
                     <TextView
@@ -298,19 +287,19 @@
                         android:text="Số lượng tham gia" />
 
                     <EditText
-                        android:inputType="number"
-                        android:hint="Nhập số lượng tham gia"
                         android:id="@+id/et_participation_limit"
-                        android:textColor="#333030"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginHorizontal="35dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="35dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/edit_text_border"
+                        android:hint="Nhập số lượng tham gia"
+                        android:inputType="number"
                         android:paddingVertical="10dp"
                         android:paddingLeft="12dp"
-                        android:paddingRight="24dp" />
+                        android:paddingRight="24dp"
+                        android:textColor="#333030"
+                        android:textSize="16sp" />
 
                     <!-- Update button -->
                     <Button
