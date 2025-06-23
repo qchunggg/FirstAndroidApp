@@ -7,7 +7,8 @@ public class ActivityModel implements Serializable {
     private String name;
     private String type;
     private String description;
-    private String time;
+    private String startTime;
+    private String endTime;
     private String quantity;
     private int thumbnailResId;
     private String eventOrganizer;  // Thêm trường eventOrganizer
@@ -19,11 +20,12 @@ public class ActivityModel implements Serializable {
     }
 
     // Constructor cho item_activity (chỉ cần thông tin cơ bản)
-    public ActivityModel(String name, String type, String description, String time, String quantity, int thumbnailResId) {
+    public ActivityModel(String name, String type, String description, String startTime, String endTime,String quantity, int thumbnailResId) {
         this.name = name;
         this.type = type;
         this.description = description;
-        this.time = time;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.quantity = quantity;
         this.thumbnailResId = thumbnailResId;
         this.eventOrganizer = "Toàn trường";  // Giá trị mặc định
@@ -32,11 +34,12 @@ public class ActivityModel implements Serializable {
 
 
     // Constructor cho detail_event (cần thông tin đầy đủ)
-    public ActivityModel(String name, String type, String description, String time, String quantity, String eventOrganizer, String location) {
+    public ActivityModel(String name, String type, String description, String startTime, String endTime, String quantity, String eventOrganizer, String location) {
         this.name = name;
         this.type = type;
         this.description = description;
-        this.time = time;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.quantity = quantity;
         this.thumbnailResId = 0;  // Đặt giá trị mặc định cho thumbnailResId
         this.eventOrganizer = eventOrganizer;
@@ -76,12 +79,20 @@ public class ActivityModel implements Serializable {
         this.description = description;
     }
 
-    public String getTime() {
-        return time;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public String getQuantity() {

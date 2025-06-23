@@ -42,7 +42,11 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         holder.tvName.setText(activity.getName());
         holder.tvType.setText(activity.getType());
-        holder.tvTime.setText(activity.getTime());
+
+        // Hiển thị thời gian bắt đầu và kết thúc
+        String time = activity.getStartTime() + " - " + activity.getEndTime();
+        holder.tvTime.setText(time);
+
         holder.tvQuantity.setText(activity.getQuantity());
 
         // Kiểm tra trước khi split
@@ -68,7 +72,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             // Truyền các dữ liệu qua Intent
             intent.putExtra("name", activity.getName());
             intent.putExtra("description", activity.getDescription());
-            intent.putExtra("time", activity.getTime());
+            intent.putExtra("startTime", activity.getStartTime());  // Truyền thời gian bắt đầu
+            intent.putExtra("endTime", activity.getEndTime());      // Truyền thời gian kết thúc
             intent.putExtra("quantity", activity.getQuantity());
             intent.putExtra("location", activity.getLocation());
             intent.putExtra("eventOrganizer", activity.getEventOrganizer());  // Truyền thêm thông tin tổ chức sự kiện
