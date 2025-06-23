@@ -28,56 +28,41 @@ public class AccountFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate layout của Fragment (gọi đến file XML)
         View view = inflater.inflate(R.layout.user, container, false);
 
         ImageView ivMenu = view.findViewById(R.id.ivMenu);
         ivMenu.setOnClickListener(v -> showPopupMenu(v));
 
-        // Ánh xạ các TextView từ layout XML vào các đối tượng Java
         tvUserName = view.findViewById(R.id.tvUserName);
         tvStudentId = view.findViewById(R.id.tvStudentId);
         tvClass = view.findViewById(R.id.tvClass);
         tvDepartment = view.findViewById(R.id.tvDepartment);
         tvPhone = view.findViewById(R.id.tvPhone);
 
-        // Log ra trạng thái của từng đối tượng để kiểm tra xem có bị null không
-        Log.d("AccountFragment", "tvUserName: " + (tvUserName == null ? "null" : "initialized"));
-        Log.d("AccountFragment", "tvStudentId: " + (tvStudentId == null ? "null" : "initialized"));
-        Log.d("AccountFragment", "tvClass: " + (tvClass == null ? "null" : "initialized"));
-        Log.d("AccountFragment", "tvDepartment: " + (tvDepartment == null ? "null" : "initialized"));
-        Log.d("AccountFragment", "tvPhone: " + (tvPhone == null ? "null" : "initialized"));
-
-        // Kiểm tra người dùng đã đăng nhập chưa
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            // Lấy UID của người dùng đã đăng nhập
             String uid = currentUser.getUid();
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
-            // Lấy dữ liệu người dùng từ Firebase Realtime Database
-            DatabaseReference profileRef = FirebaseDatabase.getInstance().getReference("profile").child(uid);
-            profileRef.get().addOnCompleteListener(task -> {
+            userRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    // Lấy dữ liệu người dùng từ Firebase
-                    User user = task.getResult().getValue(User.class);
+                    UserModel user = task.getResult().getValue(UserModel.class);
                     if (user != null) {
-                        // Cập nhật UI với dữ liệu người dùng
-                        Log.d("AccountFragment", "User data: " + user.getUserName());
-                        tvUserName.setText(user.getUserName());
-                        tvStudentId.setText(user.getStudentId());
-                        tvClass.setText(user.getClassName());
-                        tvDepartment.setText(user.getDepartment());
-                        tvPhone.setText(user.getPhone());
+                        Log.d("AccountFragment", "User data: " + user.getFullName());
+                        tvUserName.setText(user.getFullName());
+                        tvStudentId.setText(user.getStudentId() != null ? user.getStudentId() : "");
+                        tvClass.setText(user.getClassName() != null ? user.getClassName() : "");
+                        tvDepartment.setText(user.getDepartment() != null ? user.getDepartment() : "");
+                        tvPhone.setText(user.getPhone() != null ? user.getPhone() : "");
                     } else {
                         Log.e("AccountFragment", "User data is null");
                         tvUserName.setText("Không tìm thấy người dùng");
                     }
                 } else {
-                    Log.e("AccountFragment", "Lỗi khi tải dữ liệu profile", task.getException());
+                    Log.e("AccountFragment", "Lỗi khi tải dữ liệu users", task.getException());
                 }
             });
         } else {
-            // Nếu người dùng chưa đăng nhập, chuyển đến màn hình đăng nhập
             if (getActivity() != null) {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
@@ -90,7 +75,6 @@ public class AccountFragment extends Fragment {
 
     private void showPopupMenu(View anchor) {
         View popupView = LayoutInflater.from(getContext()).inflate(R.layout.nav_menu, null);
-
         int popupWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.5);
 
         PopupWindow popupWindow = new PopupWindow(
@@ -104,7 +88,6 @@ public class AccountFragment extends Fragment {
         popupWindow.setFocusable(true);
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
         popupWindow.setAnimationStyle(R.style.PopupAnimation);
-
         popupWindow.showAtLocation(anchor.getRootView(), Gravity.START, 0, 0);
 
         LinearLayout logoutLayout = popupView.findViewById(R.id.logout);
