@@ -130,19 +130,28 @@ public class HomeFragment extends Fragment {
     // Cập nhật thông tin người dùng trong HomeFragment
     private void updateUserInfo(String updatedUserName, String updatedStudentId, String updatedClass,
                                 String updatedDepartment, String updatedPhoneNumber) {
-        // Ánh xạ TextViews và cập nhật thông tin
+        // Ánh xạ TextViews và kiểm tra null trước khi cập nhật
         TextView tvUserName = getView().findViewById(R.id.tvUserName);
         TextView tvStudentId = getView().findViewById(R.id.tvStudentId);
         TextView tvClass = getView().findViewById(R.id.tvClass);
         TextView tvDepartment = getView().findViewById(R.id.tvDepartment);
         TextView tvPhoneNumber = getView().findViewById(R.id.tvPhone);
 
-        // Cập nhật thông tin vào các TextViews
-        tvUserName.setText(updatedUserName);
-        tvStudentId.setText(updatedStudentId);
-        tvClass.setText(updatedClass);
-        tvDepartment.setText(updatedDepartment);
-        tvPhoneNumber.setText(updatedPhoneNumber);
+        if (tvUserName != null) {
+            tvUserName.setText(updatedUserName);
+        }
+        if (tvStudentId != null) {
+            tvStudentId.setText(updatedStudentId);
+        }
+        if (tvClass != null) {
+            tvClass.setText(updatedClass);
+        }
+        if (tvDepartment != null) {
+            tvDepartment.setText(updatedDepartment);
+        }
+        if (tvPhoneNumber != null) {
+            tvPhoneNumber.setText(updatedPhoneNumber);
+        }
 
         Toast.makeText(getContext(), "Thông tin đã được cập nhật!", Toast.LENGTH_SHORT).show();
     }
