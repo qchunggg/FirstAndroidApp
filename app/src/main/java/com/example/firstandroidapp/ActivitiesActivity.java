@@ -102,16 +102,35 @@ public class ActivitiesActivity extends AppCompatActivity {
                             LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
                             LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-                            String[] quantityParts = activity.getQuantity().split("/");
-                            int currentQuantity = (quantityParts.length > 0) ? Integer.parseInt(quantityParts[0]) : 0;
+                            int currentQuantity = 0;
+                            int totalQuantity = 0;
 
-                            // Thêm hoạt động nếu số lượng lớn hơn 0 và đang diễn ra/sắp diễn ra
-                            if (currentQuantity > 0 && !startDate.isBefore(today) && !endDate.isBefore(today)) {
+                            String[] quantityParts = activity.getQuantity().split("/");
+                            if (quantityParts.length == 2) {
+                                currentQuantity = Integer.parseInt(quantityParts[0].trim());
+                                totalQuantity = Integer.parseInt(quantityParts[1].trim());
+                            } else if (quantityParts.length == 1) {
+                                totalQuantity = Integer.parseInt(quantityParts[0].trim());
+                                currentQuantity = 0;
+                            } else {
+                                continue; // bỏ qua nếu dữ liệu lỗi
+                            }
+
+
+                            if ((startDate.isEqual(today) || startDate.isAfter(today)) &&
+                                    !endDate.isBefore(today)) {
                                 activityList.add(activity);
                             }
+
                         } catch (Exception e) {
                             e.printStackTrace();  // Bỏ qua lỗi nếu ngày hoặc quantity không hợp lệ
                         }
+
+                        Log.d("DataCheck", "Name: " + activity.getName()
+                                + ", Start: " + activity.getStartTime()
+                                + ", End: " + activity.getEndTime()
+                                + ", Quantity: " + activity.getQuantity());
+
                     }
                 }
 
@@ -159,22 +178,22 @@ public class ActivitiesActivity extends AppCompatActivity {
             boolean categoryMatch = selectedCategory.equals("Tất cả") || activity.getType().equals(selectedCategory);
 
             // Lọc theo ngày và số lượng
-            String[] quantityParts = activity.getQuantity().split("/");
-            int currentQuantity = Integer.parseInt(quantityParts[0]);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate today = LocalDate.now();
             LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
             LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-            boolean isDateValid = (startDate.isEqual(today) || (startDate.isBefore(today) && today.isBefore(endDate))) && currentQuantity > 0;
+            boolean isDateValid = (startDate.isEqual(today) || startDate.isAfter(today)) &&
+                    !endDate.isBefore(today);
 
             if (categoryMatch && isDateValid) {
                 filteredList.add(activity);
             }
+
         }
 
         // Cập nhật danh sách hoạt động đã lọc
-        activityAdapter = new ActivityAdapter(this, filteredList);
-        rvActivities.setAdapter(activityAdapter);
+        activityAdapter.updateData(filteredList);
     }
 }
+

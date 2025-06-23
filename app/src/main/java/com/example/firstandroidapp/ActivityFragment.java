@@ -72,18 +72,36 @@ public class ActivityFragment extends Fragment {
                 fullActivityList.clear();
                 activityList.clear();
                 Set<String> categories = new HashSet<>();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate today = LocalDate.now();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
-                        activity.setKey(snapshot.getKey()); // Gán key
-                        fullActivityList.add(activity); // Thêm tất cả hoạt động vào danh sách
-                        String type = activity.getType().replace("\"", "");
-                        categories.add(type);
+                        activity.setKey(snapshot.getKey());
+
+                        try {
+                            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+                            LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
+
+                            if ((startDate.isEqual(today) || startDate.isAfter(today)) &&
+                                    !endDate.isBefore(today)) {
+
+                                fullActivityList.add(activity);  // ✔️ Chỉ thêm cái hợp lệ
+                                activityList.add(activity);     // ✔️ Cho hiển thị mặc định ban đầu
+                                String cleanType = activity.getType().trim().replace("\"", "");
+                                activity.setType(cleanType); // chuẩn hóa 1 lần duy nhất
+                                categories.add(cleanType);
+
+                            }
+                        } catch (Exception e) {
+                            Log.e("ActivityFragment", "Lỗi xử lý activity: " + activity.getName(), e);
+                        }
                     }
                 }
+                activityAdapter.notifyDataSetChanged();
 
-                // Thêm danh mục vào Spinner
+                // Cập nhật danh mục spinner
                 ArrayList<String> categoryList = new ArrayList<>();
                 categoryList.add("Tất cả");
                 categoryList.addAll(categories);
@@ -94,9 +112,6 @@ public class ActivityFragment extends Fragment {
                     spinnerCategory.setAdapter(adapter);
                 }
 
-                activityList.addAll(fullActivityList); // Thêm tất cả vào activityList
-                activityAdapter.notifyDataSetChanged(); // Cập nhật adapter
-                Log.d("ActivityFragment", "Data loaded, activityList size: " + activityList.size());
             }
 
             @Override
@@ -131,13 +146,9 @@ public class ActivityFragment extends Fragment {
 
     private void filterActivities(String category) {
         activityList.clear();
-        if (category.equals("Tất cả")) {
-            activityList.addAll(fullActivityList);
-        } else {
-            for (ActivityModel activity : fullActivityList) {
-                if (activity.getType().replace("\"", "").equals(category)) {
-                    activityList.add(activity);
-                }
+        for (ActivityModel activity : fullActivityList) {
+            if (category.equals("Tất cả") || activity.getType().equals(category)) {
+                activityList.add(activity);
             }
         }
         activityAdapter.notifyDataSetChanged();
