@@ -75,26 +75,14 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
         LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-        if (endDate.isBefore(today)) {
-            holder.itemView.setVisibility(View.GONE); // Ẩn item nếu endTime trước ngày hiện tại
-        } else if (startDate.isEqual(today) || (startDate.isBefore(today) && endDate.isAfter(tomorrow))) {
-            holder.tvStatus.setText("Đang diễn ra");
-            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
-            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
-        } else if (startDate.isAfter(today)) {
+        if (startDate.isAfter(today)) {
             holder.tvStatus.setText("Sắp diễn ra");
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue);
-            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         } else {
-            holder.tvStatus.setText("Đang diễn ra"); // Trường hợp khác (startDate trước today, endDate sau tomorrow)
+            holder.tvStatus.setText("Đang diễn ra");
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
-            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         }
 
-        // Kiểm tra số lượng và ẩn item nếu hết
-        if (activity.getCurrentQuantity() == activity.getTotalQuantity()) {
-            holder.itemView.setVisibility(View.GONE); // Ẩn item khi currentQuantity = 0
-        }
 
         // Xử lý hình ảnh thumbnail
         if (activity.getThumbnailResId() != 0) {
@@ -148,5 +136,11 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         activityRef.child("quantity").setValue(newQuantity + "/" + total) // Giữ nguyên total
                 .addOnSuccessListener(aVoid -> Log.d("ActivityAdapter", "Quantity updated to: " + newQuantity + "/" + total))
                 .addOnFailureListener(e -> Log.e("ActivityAdapter", "Failed to update quantity", e));
+    }
+
+    public void updateData(List<ActivityModel> newList) {
+        activitiesList.clear();
+        activitiesList.addAll(newList);
+        notifyDataSetChanged();
     }
 }
