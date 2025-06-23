@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,7 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_main);  // Đây là layout dành cho admin
 
+        // Quản lý danh mục
         LinearLayout itemManageCategory = findViewById(R.id.item_manage_category);
         itemManageCategory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,6 +32,8 @@ public class AdminActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Quản lý hoạt động
         LinearLayout itemManageActivity = findViewById(R.id.item_manage_activity);
         itemManageActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +43,21 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        // Duyệt & cấp điểm
+        LinearLayout itemApprove = findViewById(R.id.item_approve);
+        itemApprove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Thực hiện hành động khi nhấn vào mục 'Duyệt & cấp điểm'
+                Toast.makeText(AdminActivity.this, "Duyệt & cấp điểm đã được nhấn", Toast.LENGTH_SHORT).show();
+                // Ví dụ, chuyển hướng sang màn hình duyệt và cấp điểm
+                // Intent intent = new Intent(AdminActivity.this, ApproveActivity.class);
+                // startActivity(intent);
+            }
+        });
+
+
+//        Cài đặt
         LinearLayout itemSettings = findViewById(R.id.item_settings);
         itemSettings.setOnClickListener(new View.OnClickListener() {
             @Override
