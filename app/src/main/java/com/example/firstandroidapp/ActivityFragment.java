@@ -28,8 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -76,16 +74,7 @@ public class ActivityFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
-                        try {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            LocalDate today = LocalDate.now();
-                            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-                            if (!activityDate.isBefore(today)) {
-                                fullActivityList.add(activity);  // Chỉ add nếu chưa diễn ra hoặc đang diễn ra
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();  // Bỏ qua lỗi định dạng ngày
-                        }
+                        fullActivityList.add(activity);
                         String type = activity.getType().replace("\"", "");
                         categories.add(type);
                     }

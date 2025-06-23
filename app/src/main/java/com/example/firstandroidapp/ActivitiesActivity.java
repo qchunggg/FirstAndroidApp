@@ -11,14 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +21,6 @@ public class ActivitiesActivity extends AppCompatActivity {
     private RecyclerView rvActivities;
     private ActivityAdapter activityAdapter;
     private List<ActivityModel> activityList;
-    private List<ActivityModel> fullActivityList;  // Danh sách đầy đủ
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +35,11 @@ public class ActivitiesActivity extends AppCompatActivity {
 
         // Khởi tạo danh sách và dữ liệu mẫu
         activityList = new ArrayList<>();
-        fullActivityList = new ArrayList<>();
-        activityAdapter = new ActivityAdapter(activityList);
+        loadActivitiesData();
+
+        // Cài đặt RecyclerView
         rvActivities.setLayoutManager(new LinearLayoutManager(this));
+        activityAdapter = new ActivityAdapter(activityList);
         rvActivities.setAdapter(activityAdapter);
 
         // Cài đặt danh mục spinner
@@ -72,52 +65,6 @@ public class ActivitiesActivity extends AppCompatActivity {
         });
 
         Log.d(TAG, "onCreate finished");
-
-        // Tải dữ liệu Firebase
-        loadActivitiesData();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Lắng nghe sự thay đổi dữ liệu từ Firebase
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("activities");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fullActivityList.clear();
-                activityList.clear();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ActivityModel activity = snapshot.getValue(ActivityModel.class);
-                    if (activity != null) {
-                        fullActivityList.add(activity);
-
-                        // Chỉ thêm hoạt động chưa diễn ra hoặc đang diễn ra
-                        try {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            LocalDate today = LocalDate.now();
-                            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-
-                            if (!activityDate.isBefore(today)) {
-                                activityList.add(activity);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();  // Bỏ qua lỗi nếu ngày không hợp lệ
-                        }
-                    }
-                }
-
-                // Cập nhật RecyclerView
-                activityAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("Firebase", "Failed to read value.", databaseError.toException());
-            }
-        });
     }
 
     private void loadActivitiesData() {
