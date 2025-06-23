@@ -69,8 +69,8 @@ public class ActivitiesActivity extends AppCompatActivity {
 
     private void loadActivitiesData() {
         Log.d(TAG, "Loading sample data");
-        activityList.add(new ActivityModel("Hoạt động 1", "Tình nguyện", "Mô tả ngắn về hoạt động", "20/05", "45/50", R.drawable.ic_photo));
-        activityList.add(new ActivityModel("Hoạt động 2", "Học tập", "Mô tả ngắn về hoạt động", "21/05", "30/50", R.drawable.ic_photo));
+        activityList.add(new ActivityModel("Hoạt động 1", "Tình nguyện", "Mô tả ngắn về hoạt động", "20/05","21/05", "45/50", R.drawable.ic_photo));
+        activityList.add(new ActivityModel("Hoạt động 2", "Học tập", "Mô tả ngắn về hoạt động", "21/05","21/05", "30/50", R.drawable.ic_photo));
         activityAdapter = new ActivityAdapter(activityList);
         rvActivities.setAdapter(activityAdapter);
     }

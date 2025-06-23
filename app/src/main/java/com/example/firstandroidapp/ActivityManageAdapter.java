@@ -33,13 +33,22 @@ public class ActivityManageAdapter extends RecyclerView.Adapter<ActivityManageAd
     @Override
     public void onBindViewHolder(@NonNull ActivityViewHolder holder, int position) {
         ActivityModel activity = activityList.get(position);
+
         holder.tvTitle.setText(activity.getName());
-        holder.tvDate.setText(activity.getTime());
+        // Hiển thị thời gian bắt đầu và kết thúc
+        String timeRange = activity.getStartTime() + " - " + activity.getEndTime();
+        holder.tvDate.setText(timeRange);
 
         holder.ivDelete.setOnClickListener(v -> {
             // Gọi phương thức xóa khi nhấn nút xóa
             if (actionListener != null) {
                 actionListener.onDelete(activity);  // Truyền activity vào phương thức onDelete
+            }
+        });
+
+        holder.ivEdit.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onEdit(activity);  // Truyền activity vào phương thức onEdit
             }
         });
     }
@@ -57,14 +66,15 @@ public class ActivityManageAdapter extends RecyclerView.Adapter<ActivityManageAd
         public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvDate = itemView.findViewById(R.id.tvDate);
+            tvDate = itemView.findViewById(R.id.tvDate);  // Hiển thị thời gian
             ivEdit = itemView.findViewById(R.id.ivEdit);
             ivDelete = itemView.findViewById(R.id.ivDelete);
         }
     }
 
-    // Interface để lắng nghe sự kiện xóa
+    // Interface để lắng nghe sự kiện xóa và sửa
     public interface OnActivityActionListener {
-        void onDelete(ActivityModel activity);  // Phương thức xóa hoạt động
+        void onDelete(ActivityModel activity);
+        void onEdit(ActivityModel activity);
     }
 }

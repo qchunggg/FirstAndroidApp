@@ -1,14 +1,21 @@
 package com.example.firstandroidapp;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ActivitiesManageActivity extends AppCompatActivity {
@@ -46,10 +54,18 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         activityList = new ArrayList<>();
 
         // Tạo adapter và truyền actionListener vào
-        adapter = new ActivityManageAdapter(activityList, activity -> {
-            // Xử lý sự kiện xóa khi người dùng nhấn nút xóa
-            showDeleteConfirmationDialog(activity);
+        adapter = new ActivityManageAdapter(activityList, new ActivityManageAdapter.OnActivityActionListener() {
+            @Override
+            public void onDelete(ActivityModel activity) {
+                showDeleteConfirmationDialog(activity);
+            }
+
+            @Override
+            public void onEdit(ActivityModel activity) {
+                showEditActivityDialog(activity);
+            }
         });
+
         rvActivities.setAdapter(adapter);
 
         // Truy cập Firebase Database
@@ -62,9 +78,8 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             finish();
         });
 
-        btnAdd.setOnClickListener(v -> {
-            // Logic để thêm hoạt động mới
-        });
+        // Mở dialog thêm hoạt động mới
+        btnAdd.setOnClickListener(v -> showAddActivityDialog());
     }
 
     // Tải danh sách hoạt động từ Firebase
@@ -92,18 +107,15 @@ public class ActivitiesManageActivity extends AppCompatActivity {
     // Hiển thị dialog xác nhận xóa
     private void showDeleteConfirmationDialog(ActivityModel activity) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_remove_category, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        final android.app.AlertDialog dialog = builder.setView(dialogView).create();
-
-        // Nút "Hủy"
         Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
-        // Nút "Đồng ý" - Xóa hoạt động khỏi Firebase
-        Button btnConfirm = dialogView.findViewById(R.id.btnConfirm);
         btnConfirm.setOnClickListener(v -> {
-            String key = activity.getKey();  // Lấy key của hoạt động
+            String key = activity.getKey();
             if (key != null) {
                 deleteActivityFromFirebase(key);
                 dialog.dismiss();
@@ -121,14 +133,252 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         if (activityKey != null) {
             database.child(activityKey).removeValue()
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(ActivitiesManageActivity.this, "Xóa hoạt động thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Xóa hoạt động thành công", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(ActivitiesManageActivity.this, "Xóa không thành công: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Xóa không thành công: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         } else {
-            Toast.makeText(ActivitiesManageActivity.this, "Không tìm thấy key của hoạt động", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Không tìm thấy key của hoạt động", Toast.LENGTH_SHORT).show();
         }
     }
+
+    // Hiển thị dialog thêm hoạt động
+    private void showAddActivityDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.add_manager_activity, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        // Ánh xạ view
+        EditText etName = dialogView.findViewById(R.id.et_ten_hoat_dong);
+        EditText etDescription = dialogView.findViewById(R.id.et_mo_ta);
+        Spinner tvCategory = dialogView.findViewById(R.id.spinner_category);
+        EditText etTimeStart = dialogView.findViewById(R.id.et_time_start);
+        EditText etTimeEnd = dialogView.findViewById(R.id.et_time_end);
+        EditText etLocation = dialogView.findViewById(R.id.et_location);
+        EditText etReward = dialogView.findViewById(R.id.et_reward);
+        EditText etQuantity = dialogView.findViewById(R.id.et_participation_limit);
+        Button btnUpdate = dialogView.findViewById(R.id.btn_update);
+        ImageView btnBack = dialogView.findViewById(R.id.btn_back);
+
+        // Danh sách danh mục và adapter
+        List<CategoryModel> categoryList = new ArrayList<>();
+        ArrayAdapter<CategoryModel> categoryAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categoryList
+        );
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tvCategory.setAdapter(categoryAdapter);
+
+        // Tải danh mục từ Firebase
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("categories");
+        categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                categoryList.clear();
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    CategoryModel category = item.getValue(CategoryModel.class);
+                    if (category != null) {
+                        category.setKey(item.getKey());
+                        categoryList.add(category);
+                    }
+                }
+                categoryAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ActivitiesManageActivity.this, "Lỗi khi tải danh mục", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Chọn ngày
+        ImageView timePickerStart = dialogView.findViewById(R.id.time_picker_start);
+        ImageView timePickerEnd = dialogView.findViewById(R.id.time_picker_end);
+        timePickerStart.setOnClickListener(v -> showDatePickerDialog(etTimeStart));
+        timePickerEnd.setOnClickListener(v -> showDatePickerDialog(etTimeEnd));
+
+        // Xử lý nút quay lại
+        btnBack.setOnClickListener(v -> dialog.dismiss());
+
+        // Xử lý thêm hoạt động
+        btnUpdate.setOnClickListener(v -> {
+            String name = etName.getText().toString().trim();
+            String desc = etDescription.getText().toString().trim();
+            String timeStart = etTimeStart.getText().toString().trim();
+            String timeEnd = etTimeEnd.getText().toString().trim();
+            String location = etLocation.getText().toString().trim();
+            String reward = etReward.getText().toString().trim();
+            String quantity = etQuantity.getText().toString().trim();
+
+            if (name.isEmpty() || desc.isEmpty() || timeStart.isEmpty() || timeEnd.isEmpty() || categoryList.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Lấy danh mục được chọn
+            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
+            String categoryTitle = selectedCategory.getTitle(); // hoặc getKey() nếu bạn muốn lưu key
+
+            // Tạo object hoạt động
+            String key = database.push().getKey();
+            ActivityModel activity = new ActivityModel(name, categoryTitle, desc, timeStart, timeEnd, quantity, 0);
+            activity.setKey(key);
+            activity.setLocation(location);
+            activity.setEventOrganizer("Tự động");
+
+            // Lưu vào Firebase
+            database.child(key).setValue(activity)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(this, "Thêm hoạt động thành công", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Lỗi khi thêm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        dialog.show();
+    }
+
+
+
+
+
+    // Hiển thị DatePickerDialog để chọn ngày
+    private void showDatePickerDialog(EditText dateEditText) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Hiển thị DatePickerDialog
+        DatePickerDialog datePickerDialog = new DatePickerDialog(ActivitiesManageActivity.this,
+                (view, year1, month1, dayOfMonth) -> {
+                    String date = String.format("%02d/%02d/%04d", dayOfMonth, month1 + 1, year1); // Tháng bắt đầu từ 0
+                    dateEditText.setText(date);
+                }, year, month, day);
+        datePickerDialog.show();
+    }
+
+
+    private void showEditActivityDialog(ActivityModel activity) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.design_manager_activity, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+
+        // Ánh xạ view
+        EditText etName = dialogView.findViewById(R.id.et_ten_hoat_dong);
+        EditText etDescription = dialogView.findViewById(R.id.et_mo_ta);
+        Spinner tvCategory = dialogView.findViewById(R.id.spinner_category);
+        EditText etTimeStart = dialogView.findViewById(R.id.et_time_start);
+        EditText etTimeEnd = dialogView.findViewById(R.id.et_time_end);
+        EditText etLocation = dialogView.findViewById(R.id.et_location);
+        EditText etReward = dialogView.findViewById(R.id.et_reward);
+        EditText etQuantity = dialogView.findViewById(R.id.et_participation_limit);
+        Button btnUpdate = dialogView.findViewById(R.id.btn_update);
+        ImageView btnBack = dialogView.findViewById(R.id.btn_back);
+
+        // Gán dữ liệu ban đầu
+        etName.setText(activity.getName());
+        etDescription.setText(activity.getDescription());
+        etTimeStart.setText(activity.getStartTime());
+        etTimeEnd.setText(activity.getEndTime());
+        etLocation.setText(activity.getLocation());
+        etQuantity.setText(activity.getQuantity());
+        etReward.setText("0");
+        btnUpdate.setText("Cập nhật");
+
+        // Danh sách danh mục và adapter
+        List<CategoryModel> categoryList = new ArrayList<>();
+        ArrayAdapter<CategoryModel> categoryAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categoryList
+        );
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tvCategory.setAdapter(categoryAdapter);
+
+        // Tải danh mục từ Firebase và chọn đúng danh mục của activity
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("categories");
+        categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                categoryList.clear();
+                int selectedIndex = 0;
+                int i = 0;
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    CategoryModel category = item.getValue(CategoryModel.class);
+                    if (category != null) {
+                        category.setKey(item.getKey());
+                        categoryList.add(category);
+
+                        if (category.getTitle().equals(activity.getType())) {
+                            selectedIndex = i;
+                        }
+                        i++;
+                    }
+                }
+                categoryAdapter.notifyDataSetChanged();
+                tvCategory.setSelection(selectedIndex); // Hiển thị đúng danh mục của hoạt động
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ActivitiesManageActivity.this, "Lỗi khi tải danh mục", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Nút quay lại
+        btnBack.setOnClickListener(v -> dialog.dismiss());
+
+        // Chọn ngày
+        ImageView timePickerStart = dialogView.findViewById(R.id.time_picker_start);
+        ImageView timePickerEnd = dialogView.findViewById(R.id.time_picker_end);
+        timePickerStart.setOnClickListener(v -> showDatePickerDialog(etTimeStart));
+        timePickerEnd.setOnClickListener(v -> showDatePickerDialog(etTimeEnd));
+
+        // Nút cập nhật
+        btnUpdate.setOnClickListener(v -> {
+            String name = etName.getText().toString().trim();
+            String desc = etDescription.getText().toString().trim();
+            String timeStart = etTimeStart.getText().toString().trim();
+            String timeEnd = etTimeEnd.getText().toString().trim();
+            String location = etLocation.getText().toString().trim();
+            String quantity = etQuantity.getText().toString().trim();
+
+            if (name.isEmpty() || desc.isEmpty() || timeStart.isEmpty() || timeEnd.isEmpty() || categoryList.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Lấy danh mục được chọn
+            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
+            String categoryTitle = selectedCategory.getTitle(); // hoặc getKey()
+
+            // Cập nhật model
+            activity.setName(name);
+            activity.setDescription(desc);
+            activity.setType(categoryTitle);  // lưu tên danh mục
+            activity.setStartTime(timeStart);
+            activity.setEndTime(timeEnd);
+            activity.setLocation(location);
+            activity.setQuantity(quantity);
+
+            String key = activity.getKey();
+            if (key != null) {
+                database.child(key).setValue(activity)
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+            }
+        });
+
+        dialog.show();
+    }
+
 
 }
