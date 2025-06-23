@@ -16,45 +16,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <!-- Custom layout for toolbar elements -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+<!--    &lt;!&ndash; Custom layout for toolbar elements &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="30dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:orientation="horizontal"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent">-->
 
-        <!-- Navigation icon (Menu) -->
-        <ImageView
-            android:id="@+id/ic_menu"
-            android:layout_width="52dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_menu" />
+<!--        &lt;!&ndash; Navigation icon (Menu) &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/ic_menu"-->
+<!--            android:layout_width="52dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:src="@drawable/ic_menu" />-->
 
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="TLU Engage"
-            android:textSize="20sp" />
+<!--        <TextView-->
+<!--            android:id="@+id/toolbar_title"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center"-->
+<!--            android:text="TLU Engage"-->
+<!--            android:textSize="20sp" />-->
 
-        <!-- Notification icon -->
-        <ImageView
-            android:id="@+id/toolbar_notification_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_noti" />
-    </LinearLayout>
+<!--        &lt;!&ndash; Notification icon &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/toolbar_notification_icon"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:src="@drawable/ic_noti" />-->
+<!--    </LinearLayout>-->
 
     <!-- Bottom Navigation Bar -->
     <LinearLayout

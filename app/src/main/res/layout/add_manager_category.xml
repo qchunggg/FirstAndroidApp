@@ -45,7 +45,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:gravity="center"
-                        android:text="Sửa Hoạt Động"
+                        android:text="Thêm Hoạt Động"
                         android:textColor="#000000"
                         android:textSize="33sp"
                         android:textStyle="bold" />
