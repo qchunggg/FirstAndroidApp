@@ -56,7 +56,7 @@ public class ActivityFragment extends Fragment {
         activityList = new ArrayList<>();
         fullActivityList = new ArrayList<>();
 
-        activityAdapter = new ActivityAdapter(activityList);
+        activityAdapter = new ActivityAdapter(requireContext(), activityList);
         recyclerView.setAdapter(activityAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -76,16 +76,8 @@ public class ActivityFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
-                        try {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            LocalDate today = LocalDate.now();
-                            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-                            if (!activityDate.isBefore(today)) {
-                                fullActivityList.add(activity);  // Chỉ add nếu chưa diễn ra hoặc đang diễn ra
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();  // Bỏ qua lỗi định dạng ngày
-                        }
+                        activity.setKey(snapshot.getKey()); // Gán key
+                        fullActivityList.add(activity); // Thêm tất cả hoạt động vào danh sách
                         String type = activity.getType().replace("\"", "");
                         categories.add(type);
                     }
@@ -102,8 +94,9 @@ public class ActivityFragment extends Fragment {
                     spinnerCategory.setAdapter(adapter);
                 }
 
-                activityList.addAll(fullActivityList);
-                activityAdapter.notifyDataSetChanged();
+                activityList.addAll(fullActivityList); // Thêm tất cả vào activityList
+                activityAdapter.notifyDataSetChanged(); // Cập nhật adapter
+                Log.d("ActivityFragment", "Data loaded, activityList size: " + activityList.size());
             }
 
             @Override

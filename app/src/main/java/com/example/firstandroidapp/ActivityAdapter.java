@@ -1,15 +1,21 @@
 package com.example.firstandroidapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,10 +24,13 @@ import java.util.List;
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
 
     private List<ActivityModel> activitiesList;
+    private Context context; // 🟡 Thêm biến context
 
-    public ActivityAdapter(List<ActivityModel> activitiesList) {
+    public ActivityAdapter(Context context, List<ActivityModel> activitiesList) {
+        this.context = context; // 🟡 Gán context từ constructor
         this.activitiesList = activitiesList;
     }
+
 
     @NonNull
     @Override
@@ -37,50 +46,55 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Hiển thị mô tả rút gọn
         String description = activity.getDescription();
-        if (description.length() > 50) { // Giới hạn độ dài mô tả
-            description = description.substring(0, 50) + "..."; // Thêm dấu ba chấm
+        if (description.length() > 50) {
+            description = description.substring(0, 50) + "...";
         }
         holder.tvDesc.setText(description);
 
+        // Hiển thị tên và loại hoạt động
         holder.tvName.setText(activity.getName());
         holder.tvType.setText(activity.getType());
 
-        // Hiển thị thời gian bắt đầu và kết thúc
-        String time = activity.getStartTime() + " - " + activity.getEndTime();
-        holder.tvTime.setText(time);
-
-        holder.tvQuantity.setText(activity.getQuantity());
-
-        // Xử lý trạng thái dựa theo ngày
+        // Cập nhật thời gian chỉ là startTime
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate today = LocalDate.now();
-
         try {
-            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-
-            if (activityDate.isEqual(today)) {
-                holder.tvStatus.setText("Đang diễn ra");
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
-            } else if (activityDate.isAfter(today)) {
-                holder.tvStatus.setText("Sắp diễn ra");
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue); // bạn cần tạo file này
-            } else {
-                // Ẩn item bằng cách đặt chiều cao = 0, hoặc xử lý ở bước lọc (nên làm ở bước 3)
-                holder.itemView.setVisibility(View.GONE);
-                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-            }
+            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+            holder.tvTime.setText(startDate.format(formatter));  // Chỉ hiển thị startTime
         } catch (Exception e) {
-            e.printStackTrace(); // Tránh crash nếu định dạng sai
+            e.printStackTrace();
         }
 
-        // Kiểm tra trước khi split
-        String quantity = activity.getQuantity();
-        String shortQuantity = quantity;
-        if (quantity.contains("/")) {
-            String[] quantitySplit = quantity.split("/");
-            shortQuantity = quantitySplit[0] + "/" + quantitySplit[1].substring(0, 2);  // Chỉ lấy 2 chữ số đầu của tổng
+        // Hiển thị quantity
+        int current = activity.getCurrentQuantity();
+        int total = activity.getTotalQuantity();
+        holder.tvQuantity.setText(current + "/" + total);
+
+        // Xử lý trạng thái hoạt động dựa trên thời gian
+        LocalDate today = LocalDate.now(); // Ngày hiện tại: 23/06/2025
+        LocalDate tomorrow = today.plusDays(1); // Ngày tiếp theo: 24/06/2025
+        LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+        LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
+
+        if (endDate.isBefore(today)) {
+            holder.itemView.setVisibility(View.GONE); // Ẩn item nếu endTime trước ngày hiện tại
+        } else if (startDate.isEqual(today) || (startDate.isBefore(today) && endDate.isAfter(tomorrow))) {
+            holder.tvStatus.setText("Đang diễn ra");
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
+        } else if (startDate.isAfter(today)) {
+            holder.tvStatus.setText("Sắp diễn ra");
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
+        } else {
+            holder.tvStatus.setText("Đang diễn ra"); // Trường hợp khác (startDate trước today, endDate sau tomorrow)
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         }
-        holder.tvQuantity.setText(shortQuantity);  // Hiển thị số lượng ngắn gọn
+
+        // Kiểm tra số lượng và ẩn item nếu hết
+        if (activity.getCurrentQuantity() == activity.getTotalQuantity()) {
+            holder.itemView.setVisibility(View.GONE); // Ẩn item khi currentQuantity = 0
+        }
 
         // Xử lý hình ảnh thumbnail
         if (activity.getThumbnailResId() != 0) {
@@ -91,18 +105,18 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Xử lý sự kiện click vào nút Chi tiết
         holder.btnDetail.setOnClickListener(v -> {
-            // Tạo Intent để chuyển sang DetailEventActivity
-            Intent intent = new Intent(v.getContext(), DetailEventActivity.class);
-            // Truyền các dữ liệu qua Intent
-            intent.putExtra("name", activity.getName());
-            intent.putExtra("description", activity.getDescription());
-            intent.putExtra("startTime", activity.getStartTime());  // Truyền thời gian bắt đầu
-            intent.putExtra("endTime", activity.getEndTime());      // Truyền thời gian kết thúc
-            intent.putExtra("quantity", activity.getQuantity());
-            intent.putExtra("location", activity.getLocation());
-            intent.putExtra("eventOrganizer", activity.getEventOrganizer());  // Truyền thêm thông tin tổ chức sự kiện
-            v.getContext().startActivity(intent);
+            Intent intent = new Intent(context, DetailEventActivity.class);
+            intent.putExtra("activity", activity); // activity là ActivityModel
+            if (context instanceof ActivitiesActivity) {
+                ((ActivitiesActivity) context).startActivityForResult(intent, 1);
+            } else {
+                context.startActivity(intent); // fallback cho Fragment hoặc SearchActivity
+            }
+            Log.d("ActivityAdapter", "btnDetail clicked: " + activity.getName());
         });
+
+
+        Log.d("ActivityAdapter", "Binding item at position " + position + ", name: " + activity.getName() + ", visible: " + (holder.itemView.getVisibility() == View.VISIBLE));
     }
 
     @Override
@@ -126,5 +140,13 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnDetail = itemView.findViewById(R.id.btnDetail);
         }
+    }
+
+    // Thêm phương thức để cập nhật quantity trong Firebase
+    private void updateQuantityInFirebase(String activityKey, int newQuantity, int total) {
+        DatabaseReference activityRef = FirebaseDatabase.getInstance().getReference("activities").child(activityKey);
+        activityRef.child("quantity").setValue(newQuantity + "/" + total) // Giữ nguyên total
+                .addOnSuccessListener(aVoid -> Log.d("ActivityAdapter", "Quantity updated to: " + newQuantity + "/" + total))
+                .addOnFailureListener(e -> Log.e("ActivityAdapter", "Failed to update quantity", e));
     }
 }
