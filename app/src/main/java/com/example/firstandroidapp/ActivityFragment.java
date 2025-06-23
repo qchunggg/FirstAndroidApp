@@ -28,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +44,8 @@ public class ActivityFragment extends Fragment {
     private Spinner spinnerCategory;
     private ImageView ivSearch;
 
+    private android.app.ProgressDialog progressDialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activities, container, false);
@@ -54,7 +58,7 @@ public class ActivityFragment extends Fragment {
         activityList = new ArrayList<>();
         fullActivityList = new ArrayList<>();
 
-        activityAdapter = new ActivityAdapter(activityList);
+        activityAdapter = new ActivityAdapter(requireContext(), activityList);
         recyclerView.setAdapter(activityAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -70,17 +74,36 @@ public class ActivityFragment extends Fragment {
                 fullActivityList.clear();
                 activityList.clear();
                 Set<String> categories = new HashSet<>();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate today = LocalDate.now();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
-                        fullActivityList.add(activity);
-                        String type = activity.getType().replace("\"", "");
-                        categories.add(type);
+                        activity.setKey(snapshot.getKey());
+
+                        try {
+                            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+                            LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
+
+                            if ((startDate.isEqual(today) || startDate.isAfter(today)) &&
+                                    !endDate.isBefore(today)) {
+
+                                fullActivityList.add(activity);  // ✔️ Chỉ thêm cái hợp lệ
+                                activityList.add(activity);     // ✔️ Cho hiển thị mặc định ban đầu
+                                String cleanType = activity.getType().trim().replace("\"", "");
+                                activity.setType(cleanType); // chuẩn hóa 1 lần duy nhất
+                                categories.add(cleanType);
+
+                            }
+                        } catch (Exception e) {
+                            Log.e("ActivityFragment", "Lỗi xử lý activity: " + activity.getName(), e);
+                        }
                     }
                 }
+                activityAdapter.notifyDataSetChanged();
 
-                // Thêm danh mục vào Spinner
+                // Cập nhật danh mục spinner
                 ArrayList<String> categoryList = new ArrayList<>();
                 categoryList.add("Tất cả");
                 categoryList.addAll(categories);
@@ -91,8 +114,6 @@ public class ActivityFragment extends Fragment {
                     spinnerCategory.setAdapter(adapter);
                 }
 
-                activityList.addAll(fullActivityList);
-                activityAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -122,18 +143,18 @@ public class ActivityFragment extends Fragment {
             startActivity(intent);
         });
 
+        progressDialog = new android.app.ProgressDialog(getContext());
+        progressDialog.setMessage("Đang đăng xuất...");
+        progressDialog.setCancelable(false);
+
         return view;
     }
 
     private void filterActivities(String category) {
         activityList.clear();
-        if (category.equals("Tất cả")) {
-            activityList.addAll(fullActivityList);
-        } else {
-            for (ActivityModel activity : fullActivityList) {
-                if (activity.getType().replace("\"", "").equals(category)) {
-                    activityList.add(activity);
-                }
+        for (ActivityModel activity : fullActivityList) {
+            if (category.equals("Tất cả") || activity.getType().equals(category)) {
+                activityList.add(activity);
             }
         }
         activityAdapter.notifyDataSetChanged();
@@ -161,10 +182,16 @@ public class ActivityFragment extends Fragment {
         LinearLayout logoutLayout = popupView.findViewById(R.id.logout);
         if (logoutLayout != null) {
             logoutLayout.setOnClickListener(v -> {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                progressDialog.show(); // Hiện hiệu ứng loading
+
+                logoutLayout.postDelayed(() -> {
+                    FirebaseAuth.getInstance().signOut();
+
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    progressDialog.dismiss(); // Tắt loading
+                    startActivity(intent);
+                }, 1300); // Loading trong 1.3 giây
             });
         }
     }

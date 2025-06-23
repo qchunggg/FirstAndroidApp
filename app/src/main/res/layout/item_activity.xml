@@ -98,7 +98,7 @@
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20/05"
+                    android:text="20/05/2025"
                     android:textSize="15sp"
                     android:textColor="#71757D"
                     android:layout_marginEnd="16dp"/>

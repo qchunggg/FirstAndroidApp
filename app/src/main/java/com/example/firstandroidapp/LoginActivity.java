@@ -31,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton btnLogin;
     private TextView tvRegister, tvForgot;
     private boolean isPasswordVisible = false;
+    private android.app.ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,11 @@ public class LoginActivity extends AppCompatActivity {
         tvForgot.setOnClickListener(v ->
                 startActivity(new Intent(this, ForgotPasswordActivity.class))
         );
+
+        progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage("Đang đăng nhập...");
+        progressDialog.setCancelable(false);
+
     }
 
     private void setupPasswordVisibilityToggle(EditText editText, int visibilityOffIcon, int visibilityOnIcon) {
@@ -110,6 +117,8 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseAuth.getInstance().signOut();
 
+        progressDialog.show();
+
         // Đăng nhập
         mAuth.signInWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
@@ -129,6 +138,8 @@ public class LoginActivity extends AppCompatActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                progressDialog.dismiss(); // ✅ Dismiss khi có dữ liệu
+
                 if (snapshot.exists()) {
                     Boolean isAdmin = snapshot.child("isAdmin").getValue(Boolean.class);
 
@@ -148,6 +159,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
+                progressDialog.dismiss(); // ✅ Dismiss khi có lỗi
+
                 Log.e("FirebaseError", "Lỗi khi kiểm tra quyền admin: " + error.getMessage());
                 Toast.makeText(LoginActivity.this, "Lỗi hệ thống: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
