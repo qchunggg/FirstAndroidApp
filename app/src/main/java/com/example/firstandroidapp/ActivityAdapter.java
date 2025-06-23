@@ -1,5 +1,6 @@
 package com.example.firstandroidapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +24,13 @@ import java.util.List;
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
 
     private List<ActivityModel> activitiesList;
+    private Context context; // 🟡 Thêm biến context
 
-    public ActivityAdapter(List<ActivityModel> activitiesList) {
+    public ActivityAdapter(Context context, List<ActivityModel> activitiesList) {
+        this.context = context; // 🟡 Gán context từ constructor
         this.activitiesList = activitiesList;
     }
+
 
     @NonNull
     @Override
@@ -43,7 +47,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         // Hiển thị mô tả rút gọn
         String description = activity.getDescription();
         if (description.length() > 50) {
-            description = description.substring(0, 50) + "..."; // Thêm dấu ba chấm
+            description = description.substring(0, 50) + "...";
         }
         holder.tvDesc.setText(description);
 
@@ -60,38 +64,36 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             e.printStackTrace();
         }
 
-        // Xử lý số lượng (quantity)
-        String quantity = activity.getQuantity();
-        String[] quantityParts = quantity.split("/");
-
-        // Kiểm tra nếu quantity không chứa dấu "/" (chỉ có current value)
-        if (quantityParts.length < 2) {
-            // Nếu quantity không có "/", giả sử total = current
-            holder.tvQuantity.setText(quantity + "/" + quantity);  // Hiển thị 100/100 nếu quantity = "100"
-        } else {
-            int current = Integer.parseInt(quantityParts[0]);
-            int total = Integer.parseInt(quantityParts[1]);
-            holder.tvQuantity.setText(current + "/" + total);  // Hiển thị quantity dưới dạng current/total
-        }
+        // Hiển thị quantity
+        int current = activity.getCurrentQuantity();
+        int total = activity.getTotalQuantity();
+        holder.tvQuantity.setText(current + "/" + total);
 
         // Xử lý trạng thái hoạt động dựa trên thời gian
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(); // Ngày hiện tại: 23/06/2025
+        LocalDate tomorrow = today.plusDays(1); // Ngày tiếp theo: 24/06/2025
         LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
         LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-        if (startDate.isEqual(today) || (startDate.isBefore(today) && today.isBefore(endDate))) {
+        if (endDate.isBefore(today)) {
+            holder.itemView.setVisibility(View.GONE); // Ẩn item nếu endTime trước ngày hiện tại
+        } else if (startDate.isEqual(today) || (startDate.isBefore(today) && endDate.isAfter(tomorrow))) {
             holder.tvStatus.setText("Đang diễn ra");
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         } else if (startDate.isAfter(today)) {
             holder.tvStatus.setText("Sắp diễn ra");
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         } else {
-            holder.itemView.setVisibility(View.GONE);  // Ẩn item nếu đã kết thúc
+            holder.tvStatus.setText("Đang diễn ra"); // Trường hợp khác (startDate trước today, endDate sau tomorrow)
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+            holder.itemView.setVisibility(View.VISIBLE); // Đảm bảo item hiển thị
         }
 
         // Kiểm tra số lượng và ẩn item nếu hết
-        if (Integer.parseInt(quantityParts[0]) == 0) {
-            holder.itemView.setVisibility(View.GONE);  // Ẩn item khi quantity = 0
+        if (activity.getCurrentQuantity() == activity.getTotalQuantity()) {
+            holder.itemView.setVisibility(View.GONE); // Ẩn item khi currentQuantity = 0
         }
 
         // Xử lý hình ảnh thumbnail
@@ -103,11 +105,18 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Xử lý sự kiện click vào nút Chi tiết
         holder.btnDetail.setOnClickListener(v -> {
-            // Tạo Intent để chuyển sang DetailActivity (hoặc màn hình chi tiết hoạt động)
-            Intent intent = new Intent(v.getContext(), DetailEventActivity.class);
-            intent.putExtra("activity", activity);
-            v.getContext().startActivity(intent);
+            Intent intent = new Intent(context, DetailEventActivity.class);
+            intent.putExtra("activity", activity); // activity là ActivityModel
+            if (context instanceof ActivitiesActivity) {
+                ((ActivitiesActivity) context).startActivityForResult(intent, 1);
+            } else {
+                context.startActivity(intent); // fallback cho Fragment hoặc SearchActivity
+            }
+            Log.d("ActivityAdapter", "btnDetail clicked: " + activity.getName());
         });
+
+
+        Log.d("ActivityAdapter", "Binding item at position " + position + ", name: " + activity.getName() + ", visible: " + (holder.itemView.getVisibility() == View.VISIBLE));
     }
 
     @Override

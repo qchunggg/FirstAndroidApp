@@ -35,7 +35,7 @@ public class SearchActivity extends AppCompatActivity {
         // Cài đặt RecyclerView
         rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
         activityList = new ArrayList<>(); // Sẽ nhận dữ liệu từ Intent hoặc Firebase
-        activityAdapter = new ActivityAdapter(activityList);
+        activityAdapter = new ActivityAdapter(this, activityList);
         rvSearchResults.setAdapter(activityAdapter);
 
         // Xử lý nút Back
@@ -59,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("activityList")) {
             activityList = (List<ActivityModel>) intent.getSerializableExtra("activityList");
-            activityAdapter = new ActivityAdapter(new ArrayList<>(activityList));
+            activityAdapter = new ActivityAdapter(this, new ArrayList<>(activityList));
             rvSearchResults.setAdapter(activityAdapter);
         }
     }
@@ -76,7 +76,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         }
-        activityAdapter = new ActivityAdapter(filteredList);
+        activityAdapter = new ActivityAdapter(this, filteredList);
         rvSearchResults.setAdapter(activityAdapter);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.firstandroidapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +46,7 @@ public class ActivitiesActivity extends AppCompatActivity {
         // Khởi tạo danh sách và dữ liệu mẫu
         activityList = new ArrayList<>();
         fullActivityList = new ArrayList<>();
-        activityAdapter = new ActivityAdapter(activityList);
+        activityAdapter = new ActivityAdapter(this, activityList);
         rvActivities.setLayoutManager(new LinearLayoutManager(this));
         rvActivities.setAdapter(activityAdapter);
 
@@ -73,8 +74,6 @@ public class ActivitiesActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate finished");
 
-        // Tải dữ liệu Firebase
-        loadActivitiesData();
     }
 
     @Override
@@ -92,6 +91,8 @@ public class ActivitiesActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
+                        // Gán key từ snapshot
+                        activity.setKey(snapshot.getKey());
                         fullActivityList.add(activity);
 
                         // Chỉ thêm hoạt động chưa diễn ra hoặc đang diễn ra
@@ -102,36 +103,49 @@ public class ActivitiesActivity extends AppCompatActivity {
                             LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
                             String[] quantityParts = activity.getQuantity().split("/");
-                            int currentQuantity = Integer.parseInt(quantityParts[0]);
+                            int currentQuantity = (quantityParts.length > 0) ? Integer.parseInt(quantityParts[0]) : 0;
 
                             // Thêm hoạt động nếu số lượng lớn hơn 0 và đang diễn ra/sắp diễn ra
                             if (currentQuantity > 0 && !startDate.isBefore(today) && !endDate.isBefore(today)) {
                                 activityList.add(activity);
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();  // Bỏ qua lỗi nếu ngày không hợp lệ
+                            e.printStackTrace();  // Bỏ qua lỗi nếu ngày hoặc quantity không hợp lệ
                         }
                     }
                 }
 
                 // Cập nhật RecyclerView
                 activityAdapter.notifyDataSetChanged();
+                Log.d(TAG, "Data loaded, activityList size: " + activityList.size());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("Firebase", "Failed to read value.", databaseError.toException());
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
     }
 
-    private void loadActivitiesData() {
-        Log.d(TAG, "Loading sample data");
-        // Dữ liệu mẫu (có thể bỏ qua khi lấy từ Firebase)
-        activityList.add(new ActivityModel("Hoạt động 1", "Tình nguyện", "Mô tả ngắn về hoạt động", "20/05", "21/05", "45/50", R.drawable.ic_photo));
-        activityList.add(new ActivityModel("Hoạt động 2", "Học tập", "Mô tả ngắn về hoạt động", "21/05", "21/05", "30/50", R.drawable.ic_photo));
-        activityAdapter = new ActivityAdapter(activityList);
-        rvActivities.setAdapter(activityAdapter);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            ActivityModel updatedActivity = (ActivityModel) data.getSerializableExtra("updatedActivity");
+            if (updatedActivity != null) {
+                for (int i = 0; i < activityList.size(); i++) {
+                    ActivityModel activity = activityList.get(i);
+                    if (activity.getKey().equals(updatedActivity.getKey())) {
+                        activity.setCurrentQuantity(updatedActivity.getCurrentQuantity());
+                        activity.setTotalQuantity(updatedActivity.getTotalQuantity());
+                        activityList.set(i, activity);
+                        break;
+                    }
+                }
+                activityAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     private void filterActivitiesByCategory(int categoryIndex) {
@@ -160,7 +174,7 @@ public class ActivitiesActivity extends AppCompatActivity {
         }
 
         // Cập nhật danh sách hoạt động đã lọc
-        activityAdapter = new ActivityAdapter(filteredList);
+        activityAdapter = new ActivityAdapter(this, filteredList);
         rvActivities.setAdapter(activityAdapter);
     }
 }
