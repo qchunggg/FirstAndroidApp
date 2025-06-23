@@ -23,6 +23,8 @@ public class HomeFragment extends Fragment {
 
     static final int EDIT_PROFILE_REQUEST_CODE = 1; // Mã yêu cầu để nhận kết quả từ EditProfileActivity
 
+    private android.app.ProgressDialog progressDialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate layout của fragment
@@ -39,6 +41,10 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(getContext(), RatingActivity.class);
             startActivity(intent);
         });
+
+        progressDialog = new android.app.ProgressDialog(getContext());
+        progressDialog.setMessage("Đang đăng xuất...");
+        progressDialog.setCancelable(false);
 
         return view;
     }
@@ -71,13 +77,16 @@ public class HomeFragment extends Fragment {
         LinearLayout logoutLayout = popupView.findViewById(R.id.logout);
         if (logoutLayout != null) {
             logoutLayout.setOnClickListener(v -> {
-                // Đăng xuất khỏi Firebase
-                FirebaseAuth.getInstance().signOut();
+                progressDialog.show(); // Hiện hiệu ứng loading
 
-                // Quay về màn đăng nhập, xóa backstack
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                logoutLayout.postDelayed(() -> {
+                    FirebaseAuth.getInstance().signOut();
+
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    progressDialog.dismiss(); // Tắt loading
+                    startActivity(intent);
+                }, 1300); // Loading trong 1.3 giây
             });
         }
 
