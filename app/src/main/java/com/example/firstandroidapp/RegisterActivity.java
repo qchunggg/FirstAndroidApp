@@ -34,6 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
 
+    private android.app.ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,11 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             finish();
         });
+
+        progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage("Đang đăng ký...");
+        progressDialog.setCancelable(false);
+
     }
 
     private void setupPasswordVisibilityToggle(EditText editText, int visibilityOffIcon, int visibilityOnIcon) {
@@ -121,6 +128,8 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        progressDialog.show();
+
         // Tạo tài khoản Firebase
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnSuccessListener(authResult -> {
@@ -142,13 +151,13 @@ public class RegisterActivity extends AppCompatActivity {
                     dbRef.child(uid)
                             .setValue(userProfile)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                                 startActivity(new Intent(this, LoginActivity.class));
                                 finish();
                             })
-                            .addOnFailureListener(e -> Toast.makeText(this, "Lưu hồ sơ thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                            .addOnFailureListener(e -> progressDialog.dismiss());
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addOnFailureListener(e -> progressDialog.dismiss());
 
     }
 }
