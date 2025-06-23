@@ -39,6 +39,14 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        LinearLayout itemSettings = findViewById(R.id.item_settings);
+        itemSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, SettingManageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
