@@ -29,7 +29,7 @@ public class ActivitiesActivity extends AppCompatActivity {
     private RecyclerView rvActivities;
     private ActivityAdapter activityAdapter;
     private List<ActivityModel> activityList;
-    private List<ActivityModel> fullActivityList;  // Danh sách đầy đủ
+    private List<ActivityModel> fullActivityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +98,14 @@ public class ActivitiesActivity extends AppCompatActivity {
                         try {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                             LocalDate today = LocalDate.now();
-                            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
+                            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+                            LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-                            if (!activityDate.isBefore(today)) {
+                            String[] quantityParts = activity.getQuantity().split("/");
+                            int currentQuantity = Integer.parseInt(quantityParts[0]);
+
+                            // Thêm hoạt động nếu số lượng lớn hơn 0 và đang diễn ra/sắp diễn ra
+                            if (currentQuantity > 0 && !startDate.isBefore(today) && !endDate.isBefore(today)) {
                                 activityList.add(activity);
                             }
                         } catch (Exception e) {
@@ -122,8 +127,9 @@ public class ActivitiesActivity extends AppCompatActivity {
 
     private void loadActivitiesData() {
         Log.d(TAG, "Loading sample data");
-        activityList.add(new ActivityModel("Hoạt động 1", "Tình nguyện", "Mô tả ngắn về hoạt động", "20/05","21/05", "45/50", R.drawable.ic_photo));
-        activityList.add(new ActivityModel("Hoạt động 2", "Học tập", "Mô tả ngắn về hoạt động", "21/05","21/05", "30/50", R.drawable.ic_photo));
+        // Dữ liệu mẫu (có thể bỏ qua khi lấy từ Firebase)
+        activityList.add(new ActivityModel("Hoạt động 1", "Tình nguyện", "Mô tả ngắn về hoạt động", "20/05", "21/05", "45/50", R.drawable.ic_photo));
+        activityList.add(new ActivityModel("Hoạt động 2", "Học tập", "Mô tả ngắn về hoạt động", "21/05", "21/05", "30/50", R.drawable.ic_photo));
         activityAdapter = new ActivityAdapter(activityList);
         rvActivities.setAdapter(activityAdapter);
     }
@@ -136,11 +142,24 @@ public class ActivitiesActivity extends AppCompatActivity {
         Log.d(TAG, "Filtering category: " + selectedCategory);
 
         for (ActivityModel activity : activityList) {
-            if (selectedCategory.equals("Tất cả") || activity.getType().equals(selectedCategory)) {
+            boolean categoryMatch = selectedCategory.equals("Tất cả") || activity.getType().equals(selectedCategory);
+
+            // Lọc theo ngày và số lượng
+            String[] quantityParts = activity.getQuantity().split("/");
+            int currentQuantity = Integer.parseInt(quantityParts[0]);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate today = LocalDate.now();
+            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+            LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
+
+            boolean isDateValid = (startDate.isEqual(today) || (startDate.isBefore(today) && today.isBefore(endDate))) && currentQuantity > 0;
+
+            if (categoryMatch && isDateValid) {
                 filteredList.add(activity);
             }
         }
 
+        // Cập nhật danh sách hoạt động đã lọc
         activityAdapter = new ActivityAdapter(filteredList);
         rvActivities.setAdapter(activityAdapter);
     }

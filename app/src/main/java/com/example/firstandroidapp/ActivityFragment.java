@@ -79,12 +79,12 @@ public class ActivityFragment extends Fragment {
                         try {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                             LocalDate today = LocalDate.now();
-                            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-                            if (!activityDate.isBefore(today)) {
-                                fullActivityList.add(activity);  // Chỉ add nếu chưa diễn ra hoặc đang diễn ra
+                            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter); // Sửa ở đây
+                            if (!startDate.isBefore(today)) {  // Lọc hoạt động chưa diễn ra hoặc đang diễn ra
+                                fullActivityList.add(activity);
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();  // Bỏ qua lỗi định dạng ngày
+                            e.printStackTrace();  // Bỏ qua lỗi nếu ngày không hợp lệ
                         }
                         String type = activity.getType().replace("\"", "");
                         categories.add(type);

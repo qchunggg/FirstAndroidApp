@@ -1,15 +1,20 @@
 package com.example.firstandroidapp;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,50 +42,57 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Hiển thị mô tả rút gọn
         String description = activity.getDescription();
-        if (description.length() > 50) { // Giới hạn độ dài mô tả
+        if (description.length() > 50) {
             description = description.substring(0, 50) + "..."; // Thêm dấu ba chấm
         }
         holder.tvDesc.setText(description);
 
+        // Hiển thị tên và loại hoạt động
         holder.tvName.setText(activity.getName());
         holder.tvType.setText(activity.getType());
 
-        // Hiển thị thời gian bắt đầu và kết thúc
-        String time = activity.getStartTime() + " - " + activity.getEndTime();
-        holder.tvTime.setText(time);
-
-        holder.tvQuantity.setText(activity.getQuantity());
-
-        // Xử lý trạng thái dựa theo ngày
+        // Cập nhật thời gian chỉ là startTime
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate today = LocalDate.now();
-
         try {
-            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
-
-            if (activityDate.isEqual(today)) {
-                holder.tvStatus.setText("Đang diễn ra");
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
-            } else if (activityDate.isAfter(today)) {
-                holder.tvStatus.setText("Sắp diễn ra");
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue); // bạn cần tạo file này
-            } else {
-                // Ẩn item bằng cách đặt chiều cao = 0, hoặc xử lý ở bước lọc (nên làm ở bước 3)
-                holder.itemView.setVisibility(View.GONE);
-                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-            }
+            LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+            holder.tvTime.setText(startDate.format(formatter));  // Chỉ hiển thị startTime
         } catch (Exception e) {
-            e.printStackTrace(); // Tránh crash nếu định dạng sai
+            e.printStackTrace();
         }
 
-        // Kiểm tra trước khi split
+        // Xử lý số lượng (quantity)
         String quantity = activity.getQuantity();
-        String shortQuantity = quantity;
-        if (quantity.contains("/")) {
-            String[] quantitySplit = quantity.split("/");
-            shortQuantity = quantitySplit[0] + "/" + quantitySplit[1].substring(0, 2);  // Chỉ lấy 2 chữ số đầu của tổng
+        String[] quantityParts = quantity.split("/");
+
+        // Kiểm tra nếu quantity không chứa dấu "/" (chỉ có current value)
+        if (quantityParts.length < 2) {
+            // Nếu quantity không có "/", giả sử total = current
+            holder.tvQuantity.setText(quantity + "/" + quantity);  // Hiển thị 100/100 nếu quantity = "100"
+        } else {
+            int current = Integer.parseInt(quantityParts[0]);
+            int total = Integer.parseInt(quantityParts[1]);
+            holder.tvQuantity.setText(current + "/" + total);  // Hiển thị quantity dưới dạng current/total
         }
-        holder.tvQuantity.setText(shortQuantity);  // Hiển thị số lượng ngắn gọn
+
+        // Xử lý trạng thái hoạt động dựa trên thời gian
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
+        LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
+
+        if (startDate.isEqual(today) || (startDate.isBefore(today) && today.isBefore(endDate))) {
+            holder.tvStatus.setText("Đang diễn ra");
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+        } else if (startDate.isAfter(today)) {
+            holder.tvStatus.setText("Sắp diễn ra");
+            holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue);
+        } else {
+            holder.itemView.setVisibility(View.GONE);  // Ẩn item nếu đã kết thúc
+        }
+
+        // Kiểm tra số lượng và ẩn item nếu hết
+        if (Integer.parseInt(quantityParts[0]) == 0) {
+            holder.itemView.setVisibility(View.GONE);  // Ẩn item khi quantity = 0
+        }
 
         // Xử lý hình ảnh thumbnail
         if (activity.getThumbnailResId() != 0) {
@@ -91,16 +103,9 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Xử lý sự kiện click vào nút Chi tiết
         holder.btnDetail.setOnClickListener(v -> {
-            // Tạo Intent để chuyển sang DetailEventActivity
+            // Tạo Intent để chuyển sang DetailActivity (hoặc màn hình chi tiết hoạt động)
             Intent intent = new Intent(v.getContext(), DetailEventActivity.class);
-            // Truyền các dữ liệu qua Intent
-            intent.putExtra("name", activity.getName());
-            intent.putExtra("description", activity.getDescription());
-            intent.putExtra("startTime", activity.getStartTime());  // Truyền thời gian bắt đầu
-            intent.putExtra("endTime", activity.getEndTime());      // Truyền thời gian kết thúc
-            intent.putExtra("quantity", activity.getQuantity());
-            intent.putExtra("location", activity.getLocation());
-            intent.putExtra("eventOrganizer", activity.getEventOrganizer());  // Truyền thêm thông tin tổ chức sự kiện
+            intent.putExtra("activity", activity);
             v.getContext().startActivity(intent);
         });
     }
@@ -126,5 +131,13 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnDetail = itemView.findViewById(R.id.btnDetail);
         }
+    }
+
+    // Thêm phương thức để cập nhật quantity trong Firebase
+    private void updateQuantityInFirebase(String activityKey, int newQuantity, int total) {
+        DatabaseReference activityRef = FirebaseDatabase.getInstance().getReference("activities").child(activityKey);
+        activityRef.child("quantity").setValue(newQuantity + "/" + total) // Giữ nguyên total
+                .addOnSuccessListener(aVoid -> Log.d("ActivityAdapter", "Quantity updated to: " + newQuantity + "/" + total))
+                .addOnFailureListener(e -> Log.e("ActivityAdapter", "Failed to update quantity", e));
     }
 }
