@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:fitsSystemWindows="true">
 
     <!-- Thanh tìm kiếm -->
     <LinearLayout
@@ -19,6 +20,7 @@
 
         <!-- Biểu tượng Back -->
         <ImageView
+            android:id="@+id/ic_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_back"

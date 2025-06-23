@@ -49,15 +49,14 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Thực hiện hành động khi nhấn vào mục 'Duyệt & cấp điểm'
-                Toast.makeText(AdminActivity.this, "Duyệt & cấp điểm đã được nhấn", Toast.LENGTH_SHORT).show();
-                // Ví dụ, chuyển hướng sang màn hình duyệt và cấp điểm
-                // Intent intent = new Intent(AdminActivity.this, ApproveActivity.class);
-                // startActivity(intent);
+
+                // Chuyển hướng sang màn hình duyệt và cấp điểm
+                Intent intent = new Intent(AdminActivity.this, PointActivity.class);  // Thay đổi thành PointActivity
+                startActivity(intent);
             }
         });
 
-
-//        Cài đặt
+        // Cài đặt
         LinearLayout itemSettings = findViewById(R.id.item_settings);
         itemSettings.setOnClickListener(new View.OnClickListener() {
             @Override
