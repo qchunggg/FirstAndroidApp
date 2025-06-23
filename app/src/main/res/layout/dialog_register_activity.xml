@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup_rounded"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+<TextView
+android:id="@+id/tvTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Đăng ký"
+android:textColor="#000000"
+android:textStyle="bold"
+android:textSize="20sp"
+android:layout_gravity="center" />
+
+<TextView
+android:id="@+id/tvMessage"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Bạn có chắc chắn muốn đăng ký\nhoạt động này ?"
+android:textColor="#000000"
+android:textSize="16sp"
+android:layout_marginTop="12dp"
+android:gravity="center" />
+
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:layout_marginTop="20dp"
+android:gravity="center">
+
+<Button
+    android:id="@+id/btnCancel"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Hủy"
+    android:textColor="#000000"
+    android:backgroundTint="#EEEEEE" />
+
+<Space
+    android:layout_width="12dp"
+    android:layout_height="wrap_content" />
+
+<Button
+    android:id="@+id/btnConfirm"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Xác nhận"
+    android:textColor="#FFFFFF"
+    android:backgroundTint="#2196F3"/>
+</LinearLayout>
+    </LinearLayout>

@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
@@ -48,6 +50,28 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         holder.tvTime.setText(time);
 
         holder.tvQuantity.setText(activity.getQuantity());
+
+        // Xử lý trạng thái dựa theo ngày
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate today = LocalDate.now();
+
+        try {
+            LocalDate activityDate = LocalDate.parse(activity.getTime(), formatter);
+
+            if (activityDate.isEqual(today)) {
+                holder.tvStatus.setText("Đang diễn ra");
+                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_green);
+            } else if (activityDate.isAfter(today)) {
+                holder.tvStatus.setText("Sắp diễn ra");
+                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_blue); // bạn cần tạo file này
+            } else {
+                // Ẩn item bằng cách đặt chiều cao = 0, hoặc xử lý ở bước lọc (nên làm ở bước 3)
+                holder.itemView.setVisibility(View.GONE);
+                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Tránh crash nếu định dạng sai
+        }
 
         // Kiểm tra trước khi split
         String quantity = activity.getQuantity();
@@ -87,7 +111,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     }
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvType, tvDesc, tvTime, tvQuantity;
+        TextView tvName, tvType, tvDesc, tvTime, tvQuantity, tvStatus;
         ImageView ivThumb;
         Button btnDetail;
 
@@ -99,6 +123,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             tvTime = itemView.findViewById(R.id.tvTime);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
             ivThumb = itemView.findViewById(R.id.ivThumb);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             btnDetail = itemView.findViewById(R.id.btnDetail);
         }
     }

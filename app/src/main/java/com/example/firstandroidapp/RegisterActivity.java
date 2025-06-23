@@ -98,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String fullName = etFullName.getText().toString().trim();  // Lấy tên người dùng
+        String fullName = etFullName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String pass = etPassword.getText().toString();
         String confirm = etConfirmPassword.getText().toString();
@@ -126,13 +126,19 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnSuccessListener(authResult -> {
                     String uid = authResult.getUser().getUid();
 
-                    // Tạo dữ liệu lưu vào Realtime Database
-                    Map<String, Object> userProfile = new HashMap<>();
-                    userProfile.put("email", email);
-                    userProfile.put("fullName", fullName);  // Lưu tên người dùng
-                    userProfile.put("createdAt", System.currentTimeMillis());
-                    userProfile.put("isAdmin", false); // user thường mặc định
+                    // Tạo UserModel với các trường mới để trống
+                    UserModel userProfile = new UserModel(
+                            email,
+                            fullName,
+                            System.currentTimeMillis(),
+                            false, // isAdmin mặc định là false
+                            "",   // studentId
+                            "",   // className
+                            "",   // department
+                            ""    // phone
+                    );
 
+                    // Lưu vào Realtime Database
                     dbRef.child(uid)
                             .setValue(userProfile)
                             .addOnSuccessListener(aVoid -> {
@@ -143,5 +149,6 @@ public class RegisterActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> Toast.makeText(this, "Lưu hồ sơ thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Đăng ký thất bại: " + e.getMessage(), Toast.LENGTH_LONG).show());
+
     }
 }
