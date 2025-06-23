@@ -72,6 +72,8 @@
 
 <!--        Cài đặt Admin-->
         <activity android:name=".SettingManageActivity" />
+        <activity android:name=".PointActivity"></activity>
+
     </application>
 
 </manifest>

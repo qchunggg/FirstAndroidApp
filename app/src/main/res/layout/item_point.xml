@@ -6,7 +6,6 @@
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    android:layout_marginTop="20dp"
     >
 
     <LinearLayout
@@ -15,14 +14,13 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- Avatar -->
         <ImageView
+            android:id="@+id/ivAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_avata" />
 
-        <!-- Thông tin -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -32,6 +30,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phạm Thị B"
@@ -39,6 +38,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dọn vệ sinh môi trường"
@@ -46,6 +46,7 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="28/01/2025"
@@ -53,25 +54,24 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Ảnh minh chứng -->
         <ImageView
+            android:id="@+id/ivImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_photo" />
-
     </LinearLayout>
 
-    <!-- Nút -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         android:layout_marginTop="80dp"
-    android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp">
 
         <Button
+            android:id="@+id/btnDecline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -81,11 +81,12 @@
             android:textColor="#D32F2F"
             android:textAllCaps="false"/>
 
-    <Space
-        android:layout_width="8dp"
-        android:layout_height="wrap_content" />
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content" />
 
         <Button
+            android:id="@+id/btnConfirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
@@ -94,7 +95,6 @@
             android:text="Xác nhận &amp; Cấp điểm"
             android:textColor="#FAFBFA"
             android:textAllCaps="false"/>
+    </LinearLayout>
 
-</LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+</androidx.cardview.widget.CardView>
