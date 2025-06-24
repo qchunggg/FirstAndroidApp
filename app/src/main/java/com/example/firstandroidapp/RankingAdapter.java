@@ -20,6 +20,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflate item layout cho RecyclerView
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rating, parent, false);
         return new ViewHolder(itemView);
     }
@@ -28,13 +29,16 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         RankingItem item = rankingList.get(position);
 
+        // Hiển thị thứ hạng
         holder.tvRank.setText(String.valueOf(position + 1));
+
+        // Hiển thị tên người dùng và ID
         holder.tvUserName.setText(item.getUserName());
         holder.tvUserId.setText(item.getUserId());
 
-        // Lấy điểm theo loại điểm và hiển thị
+        // Lấy điểm dựa trên loại điểm được chọn và hiển thị
         int points = getPointsByType(item, pointsType);
-        holder.tvPoints.setText(points + " điểm");
+        holder.tvPoints.setText(points + " điểm"); // Hiển thị điểm kèm "điểm"
     }
 
     @Override
@@ -43,18 +47,26 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     }
 
     private int getPointsByType(RankingItem item, String pointsType) {
+        // Lấy điểm tương ứng với loại điểm (points1, points2, points3)
+        int points = 0;
         switch (pointsType) {
             case "points1":
-                return item.getPoints1();
+                points = item.getPoints1();
+                break;
             case "points2":
-                return item.getPoints2();
+                points = item.getPoints2();
+                break;
             case "points3":
-                return item.getPoints3();
+                points = item.getPoints3();
+                break;
             default:
-                return 0;
+                points = 0;
+                break;
         }
+        return points;
     }
 
+    // ViewHolder để lưu các tham chiếu đến các view trong item của RecyclerView
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvRank, tvUserName, tvUserId, tvPoints;
 
