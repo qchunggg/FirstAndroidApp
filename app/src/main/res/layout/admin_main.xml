@@ -21,9 +21,6 @@
         android:textSize="16sp" />
 
     <!-- 2. Ảnh header -->
-
-
-    <!-- 3. Content container trắng bo góc trên, kéo dài hẳn xuống đáy -->
     <ImageView
         android:id="@+id/ivHeader"
         android:layout_width="match_parent"
@@ -32,6 +29,7 @@
         android:scaleType="centerInside"
         android:src="@drawable/header_graphic" />
 
+    <!-- 3. Content container trắng bo góc trên, kéo dài hẳn xuống đáy -->
     <LinearLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
@@ -147,33 +145,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="Duyệt &amp; cấp điểm"
-                            android:textColor="#141414"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Thống kê -->
-                    <LinearLayout
-                        android:id="@+id/item_stats"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_card">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/ic_chart"
-                            app:tint="#5F99FF" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Thống kê"
                             android:textColor="#141414"
                             android:textSize="14sp"
                             android:textStyle="bold" />
