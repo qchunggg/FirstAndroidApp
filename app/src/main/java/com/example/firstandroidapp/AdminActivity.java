@@ -40,15 +40,7 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
-        // Thống kê
-        LinearLayout itemStatistic = findViewById(R.id.item_stats);
-        itemStatistic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AdminActivity.this, StatisticActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
 
         // Duyệt & cấp điểm
@@ -84,5 +76,5 @@ public class AdminActivity extends AppCompatActivity {
             return; // Dừng việc thực thi tiếp
         }
     }
-    
+
 }

@@ -15,13 +15,42 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HomeFragment extends Fragment {
 
+    private RecyclerView rvParticipatedCategories;
+    private UserCategoryAdapter userCategoryAdapter;
+    private TextView tvSeeMore, tvCount;
+    private boolean isExpanded = false;
     static final int EDIT_PROFILE_REQUEST_CODE = 1; // Mã yêu cầu để nhận kết quả từ EditProfileActivity
+
+    private static final Map<String, Integer> typeIconMap = new HashMap<>();
+    static {
+        typeIconMap.put("Tình nguyện", R.drawable.ic_category_volunteer);
+        typeIconMap.put("Học tập", R.drawable.ic_category_academic);
+        typeIconMap.put("Học thuật", R.drawable.ic_category_academic);
+        typeIconMap.put("Thể thao", R.drawable.ic_category_sport);
+        typeIconMap.put("Âm nhạc", R.drawable.ic_category_music);
+//        Muốn thêm thì viết vào đây
+    }
 
     private android.app.ProgressDialog progressDialog;
 
@@ -42,12 +71,78 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
+//        Hiển thị danh mục hoạt động
+        rvParticipatedCategories = view.findViewById(R.id.rvParticipatedCategories);
+        rvParticipatedCategories.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        userCategoryAdapter = new UserCategoryAdapter(getContext());
+        rvParticipatedCategories.setAdapter(userCategoryAdapter);
+
+        tvCount = view.findViewById(R.id.countactivity);
+
+        tvSeeMore = view.findViewById(R.id.tvSeeMore);
+        tvSeeMore.setOnClickListener(v -> {
+            isExpanded = !isExpanded;
+            userCategoryAdapter.setExpanded(isExpanded);
+            tvSeeMore.setText(isExpanded ? "Thu gọn" : "Xem thêm");
+
+            if (isExpanded) {
+                rvParticipatedCategories.post(() -> {
+                    rvParticipatedCategories.smoothScrollToPosition(userCategoryAdapter.getItemCount() - 1);
+                });
+            }
+        });
+
+        loadParticipatedCategoriesFromFirebase();
+
         progressDialog = new android.app.ProgressDialog(getContext());
         progressDialog.setMessage("Đang đăng xuất...");
         progressDialog.setCancelable(false);
 
         return view;
     }
+    private void loadParticipatedCategoriesFromFirebase() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history").child(userId);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Set<String> uniqueTypes = new LinkedHashSet<>();
+
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    HistoryModel model = snap.getValue(HistoryModel.class);
+                    if (model != null && model.getType() != null) {
+                        uniqueTypes.add(model.getType());
+                    }
+                }
+
+                List<CategoryModel> categoryList = new ArrayList<>();
+                for (String type : uniqueTypes) {
+                    int icon = getIconForType(type);
+                    categoryList.add(new CategoryModel(type, icon));
+                }
+
+                userCategoryAdapter.setData(categoryList);
+                tvSeeMore.setVisibility(categoryList.size() > 4 ? View.VISIBLE : View.GONE);
+
+                if (tvCount != null) {
+                    long activityCount = snapshot.getChildrenCount();
+                    tvCount.setText("Bạn đã tham gia " + activityCount + " hoạt động");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Tuỳ chọn: xử lý lỗi nếu cần
+            }
+        });
+    }
+
+    private int getIconForType(String type) {
+        if (type == null) return R.drawable.ic_default_icon;
+        return typeIconMap.getOrDefault(type.toLowerCase(), R.drawable.ic_default_icon);
+    }
+
 
     private void showPopupMenu(View anchor) {
         View popupView = LayoutInflater.from(getContext()).inflate(R.layout.nav_menu, null);
