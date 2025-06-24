@@ -78,7 +78,10 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         // Hiển thị quantity
         int current = activity.getCurrentQuantity();
         int total = activity.getTotalQuantity();
+
         holder.tvQuantity.setText(current + "/" + total);
+        // Hiển thị điểm
+        holder.tvCount.setText(String.valueOf(activity.getPoints()));
 
         // Xử lý trạng thái hoạt động dựa trên thời gian
         LocalDate today = LocalDate.now(); // Ngày hiện tại: 23/06/2025
@@ -118,7 +121,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     }
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvType, tvDesc, tvTime, tvQuantity, tvStatus;
+        TextView tvName, tvType, tvDesc, tvTime, tvQuantity, tvStatus,tvCount;
         ImageView ivThumb;
         Button btnDetail;
 
@@ -132,6 +135,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             ivThumb = itemView.findViewById(R.id.ivThumb);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnDetail = itemView.findViewById(R.id.btnDetail);
+            tvCount = itemView.findViewById(R.id.tvCount);
+
         }
     }
 

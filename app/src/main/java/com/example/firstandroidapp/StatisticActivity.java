@@ -2,24 +2,22 @@ package com.example.firstandroidapp;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Spinner;
-
-import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -38,34 +36,31 @@ public class StatisticActivity extends AppCompatActivity {
 
     private Spinner spinnerType, spinnerPeriod;
     private MaterialButton btnApplyFilter;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics);
+
         ImageView ivBack = findViewById(R.id.ivBack);
-        ivBack.setOnClickListener(v -> finish()); // hoặc onBackPressed()
+        ivBack.setOnClickListener(v -> finish());
 
-
-
-        // Ánh xạ View
         rvActivities = findViewById(R.id.rvRecentActivities);
         tvTotalPoints = findViewById(R.id.tvTotalPoints);
         graphView = findViewById(R.id.graph);
-
         spinnerPeriod = findViewById(R.id.spinner_period);
         spinnerType = findViewById(R.id.spinner_type);
         btnApplyFilter = findViewById(R.id.btn_apply_filter);
 
-        // Setup RecyclerView
         rvActivities.setLayoutManager(new LinearLayoutManager(this));
         adapter = new StatisticAdapter(activityList);
         rvActivities.setAdapter(adapter);
 
-        // Load dữ liệu ban đầu
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         loadActivitiesFromFirebase();
 
-        // Xử lý lọc khi bấm nút "Áp dụng bộ lọc"
         btnApplyFilter.setOnClickListener(view -> applyFilter());
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
                 this, R.array.categories, android.R.layout.simple_spinner_item);
@@ -76,11 +71,10 @@ public class StatisticActivity extends AppCompatActivity {
                 this, R.array.months, android.R.layout.simple_spinner_item);
         periodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPeriod.setAdapter(periodAdapter);
-
     }
 
     private void loadActivitiesFromFirebase() {
-        FirebaseDatabase.getInstance().getReference("history")
+        FirebaseDatabase.getInstance().getReference("activities")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -90,23 +84,29 @@ public class StatisticActivity extends AppCompatActivity {
                         int index = 0;
 
                         for (DataSnapshot data : snapshot.getChildren()) {
-                            String name = data.child("name").getValue(String.class);
-                            String date = data.child("date").getValue(String.class);
-                            Long points = data.child("points").getValue(Long.class); // Firebase lưu số dạng Long
+                            Boolean isRegistered = data.child("registeredUsers").child(currentUserId).getValue(Boolean.class);
+                            if (Boolean.TRUE.equals(isRegistered)) {
+                                String name = data.child("name").getValue(String.class);
+                                String date = data.child("startTime").getValue(String.class);
+                                Long points = data.child("points").getValue(Long.class);
+                                String type = data.child("type").getValue(String.class);
 
-                            if (name != null && date != null && points != null) {
-                                ActivityModel activity = new ActivityModel();
-                                activity.setName(name);
-                                activity.setStartTime(date);
-                                activity.setCurrentQuantity(points.intValue());
+                                if (name != null && date != null && points != null) {
+                                    ActivityModel activity = new ActivityModel();
+                                    activity.setName(name);
+                                    activity.setStartTime(date);
+                                    activity.setCurrentQuantity(points.intValue());
+                                    activity.setType(type);
 
-                                activityList.add(activity);
-                                totalPoint += points;
-                                graphPoints.add(new DataPoint(index++, points));
+                                    activityList.add(activity);
+                                    totalPoint += points;
+                                    graphPoints.add(new DataPoint(index++, points));
+                                }
                             }
                         }
 
-                        adapter.notifyDataSetChanged();
+                        adapter = new StatisticAdapter(activityList);
+                        rvActivities.setAdapter(adapter);
                         tvTotalPoints.setText(String.valueOf(totalPoint));
                         drawGraph(graphPoints);
                     }
@@ -118,7 +118,6 @@ public class StatisticActivity extends AppCompatActivity {
                 });
     }
 
-
     private void drawGraph(List<DataPoint> points) {
         graphView.removeAllSeries();
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(points.toArray(new DataPoint[0]));
@@ -127,9 +126,6 @@ public class StatisticActivity extends AppCompatActivity {
 
     private void applyFilter() {
         String selectedType = spinnerType.getSelectedItem().toString().trim();
-        String selectedPeriod = spinnerPeriod.getSelectedItem().toString().trim();
-
-        // Có thể lọc theo thời gian, ở đây ví dụ đơn giản chỉ lọc theo loại hoạt động
         List<ActivityModel> filtered = new ArrayList<>();
         List<DataPoint> graphPoints = new ArrayList<>();
         int totalPoint = 0;
@@ -137,7 +133,6 @@ public class StatisticActivity extends AppCompatActivity {
 
         for (ActivityModel activity : activityList) {
             boolean matchType = selectedType.equals("Tất cả") || activity.getType().equalsIgnoreCase(selectedType);
-
             if (matchType) {
                 filtered.add(activity);
                 totalPoint += activity.getCurrentQuantity();

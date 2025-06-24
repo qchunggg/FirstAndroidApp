@@ -78,6 +78,8 @@ public class ActivityModel implements Serializable {
         }
     }
 
+
+
     public String getKey() {
         return key;
     }
@@ -185,4 +187,11 @@ public class ActivityModel implements Serializable {
     public void setPoints(int points) {
         this.points = points;
     }
+    // Tạm xử lý nếu Firebase trả về cả "point" và "points"
+    public void setPointsFromFirebase(Integer pointValue) {
+        if (pointValue != null) {
+            this.points = pointValue;
+        }
+    }
+
 }
