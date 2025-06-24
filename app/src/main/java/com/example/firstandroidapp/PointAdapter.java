@@ -1,6 +1,7 @@
 package com.example.firstandroidapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,10 @@ import android.widget.PopupWindow;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Collections;
 import java.util.List;
 
 public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHolder> {
@@ -50,13 +55,13 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
         // Sự kiện cho nút "Từ chối"
         holder.btnDecline.setOnClickListener(v -> {
             // Gọi hàm showDeclinePopup khi nhấn nút "Từ chối"
-            showRejectPopup(pointItem.getPointId(), position);
+            showRejectPopup(pointItem.getUserId(), pointItem.getPointId(), position);
         });
 
         // Sự kiện cho nút "Xác nhận"
         holder.btnConfirm.setOnClickListener(v -> {
             // Gọi hàm showConfirmPopup khi nhấn nút "Xác nhận"
-            showConfirmPopup(pointItem.getPointId(), position);
+            showConfirmPopup(pointItem.getUserId(), pointItem.getPointId(), position);
         });
     }
 
@@ -81,7 +86,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
     }
 
     // Phương thức để hiển thị Popup khi nhấn nút "Từ chối"
-    private void showRejectPopup(final String pointId, final int position) {
+    private void showRejectPopup(final String userId, final String pointId, final int position) {
         // Inflating layout của Popup
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.dialog_refuse_manager_activity, null);
@@ -106,11 +111,21 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
         // Xử lý khi nhấn "Xác nhận"
         btnConfirm.setOnClickListener(v -> {
             String reason = edtReason.getText().toString();
-            // Xử lý lý do từ chối, ví dụ lưu vào Firebase hoặc xử lý khác
-            Toast.makeText(context, "Lý do từ chối: " + reason, Toast.LENGTH_SHORT).show();
+            if (!reason.isEmpty()) {
+                // Cập nhật trạng thái trên Firebase
+                updateStatusInFirebase(userId, pointId, "Từ chối xác nhận");
 
-            // Xóa dữ liệu từ Firebase và cập nhật lại RecyclerView
-            ((PointActivity) context).deletePointFromFirebase(pointId, position);
+                // Xóa đối tượng khỏi danh sách và cập nhật RecyclerView
+                pointList.remove(position); // Xóa đối tượng khỏi danh sách
+                notifyItemRemoved(position); // Cập nhật RecyclerView
+
+                // Hiển thị thông báo
+                Toast.makeText(context, "Lý do từ chối: " + reason, Toast.LENGTH_SHORT).show();
+            } else {
+                // Hiển thị thông báo nếu không nhập lý do
+                Toast.makeText(context, "Vui lòng nhập lý do", Toast.LENGTH_SHORT).show();
+            }
+
             popupWindow.dismiss(); // Đóng popup sau khi xác nhận
         });
 
@@ -119,7 +134,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
     }
 
     // Phương thức để hiển thị Popup khi nhấn nút "Xác nhận"
-    private void showConfirmPopup(final String pointId, final int position) {
+    private void showConfirmPopup(final String userId, final String pointId, final int position) {
         // Inflating layout của Popup
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.dialog_drowse_manager_activity, null);
@@ -145,7 +160,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
             // Xử lý khi nhấn "Chấp nhận"
 
             // Thực hiện hành động xác nhận (Ví dụ: Cấp điểm, etc)
-            showNewPopup(pointId, position);  // Hiển thị popup mới
+            showNewPopup(userId, pointId, position);  // Hiển thị popup mới
             popupWindow.dismiss(); // Đóng popup sau khi xác nhận
         });
 
@@ -154,7 +169,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
     }
 
     // Phương thức hiển thị popup mới khi nhấn "Chấp nhận"
-    private void showNewPopup(final String pointId, final int position) {
+    private void showNewPopup(final String userId, final String pointId, final int position) {
         // Inflating layout của Popup mới
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View newPopupView = inflater.inflate(R.layout.dialog_identify_manager_activity, null);
@@ -177,12 +192,35 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
 
         // Xử lý khi nhấn "Đóng"
         btnConfirmPopup.setOnClickListener(v -> {
+            // Cập nhật trạng thái trên Firebase
+            updateStatusInFirebase(userId, pointId, "Xác nhận thành công");
+
             // Xóa object từ Firebase và cập nhật lại RecyclerView
             ((PointActivity) context).deletePointFromFirebase(pointId, position);
+
             newPopupWindow.dismiss();  // Đóng popup mới khi nhấn "Đóng"
         });
 
         btnClosePopup.setOnClickListener(v -> newPopupWindow.dismiss());
+    }
 
+
+    // Phương thức cập nhật trạng thái trong Firebase
+    private void updateStatusInFirebase(String userId, String pointId, String newStatus) {
+        // Lấy tham chiếu đến đối tượng trong Firebase, sử dụng cả userId và pointId
+        DatabaseReference pointRef = FirebaseDatabase.getInstance().getReference("history")
+                .child(userId) // Sử dụng userId để xác định đúng đối tượng
+                .child(pointId); // Sau đó dùng pointId để cập nhật đúng mục trong userId
+
+        // Cập nhật chỉ trường 'status' trong đối tượng mà không tạo thêm object mới
+        pointRef.updateChildren(Collections.singletonMap("status", newStatus))
+                .addOnSuccessListener(aVoid -> {
+                    // Thực hiện hành động khi cập nhật thành công
+                    Log.d("Firebase", "Trạng thái đã được cập nhật thành công cho pointId: " + pointId);
+                })
+                .addOnFailureListener(e -> {
+                    // Xử lý khi có lỗi
+                    Log.e("Firebase", "Lỗi khi cập nhật trạng thái cho pointId: " + pointId, e);
+                });
     }
 }
