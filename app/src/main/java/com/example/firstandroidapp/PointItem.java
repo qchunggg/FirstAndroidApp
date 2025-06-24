@@ -4,17 +4,26 @@ public class PointItem {
     private String userName;
     private String description;
     private String date;
-    private String pointId;  // Mới thêm pointId
+    private String pointId;
+    private int points;
+    private String proofStatus;
+    private String status;
+    private String type;
 
     // Constructor, getter và setter
-    public PointItem(String userName, String description, String date, String pointId) {
+    public PointItem(String userName, String description, String date, String pointId,
+                     int points, String proofStatus, String status, String type) {
         this.userName = userName;
         this.description = description;
         this.date = date;
-        this.pointId = pointId;  // Lưu pointId
+        this.pointId = pointId;
+        this.points = points;
+        this.proofStatus = proofStatus;
+        this.status = status;
+        this.type = type;
     }
 
-    // Getter và Setter cho pointId
+    // Getter và Setter cho các trường
     public String getPointId() {
         return pointId;
     }
@@ -23,7 +32,6 @@ public class PointItem {
         this.pointId = pointId;
     }
 
-    // Getter và Setter cho các trường còn lại
     public String getUserName() {
         return userName;
     }
@@ -46,5 +54,37 @@ public class PointItem {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public String getProofStatus() {
+        return proofStatus;
+    }
+
+    public void setProofStatus(String proofStatus) {
+        this.proofStatus = proofStatus;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
