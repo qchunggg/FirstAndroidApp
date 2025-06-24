@@ -88,6 +88,11 @@ public class ActivityFragment extends Fragment {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
+                    Long points = snapshot.child("points").getValue(Long.class);
+                    if (points != null) {
+                        activity.setPoints(points.intValue());
+                    }
+
                     if (activity != null) {
                         activity.setKey(snapshot.getKey());
 

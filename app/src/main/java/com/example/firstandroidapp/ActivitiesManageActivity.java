@@ -148,7 +148,6 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.add_manager_activity, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        // Ánh xạ view
         EditText etName = dialogView.findViewById(R.id.et_ten_hoat_dong);
         EditText etDescription = dialogView.findViewById(R.id.et_mo_ta);
         Spinner tvCategory = dialogView.findViewById(R.id.spinner_category);
@@ -160,7 +159,6 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         Button btnUpdate = dialogView.findViewById(R.id.btn_update);
         ImageView btnBack = dialogView.findViewById(R.id.btn_back);
 
-        // Danh sách danh mục và adapter
         List<CategoryModel> categoryList = new ArrayList<>();
         ArrayAdapter<CategoryModel> categoryAdapter = new ArrayAdapter<>(
                 this,
@@ -170,7 +168,6 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tvCategory.setAdapter(categoryAdapter);
 
-        // Tải danh mục từ Firebase
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("categories");
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -192,16 +189,12 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             }
         });
 
-        // Chọn ngày
         ImageView timePickerStart = dialogView.findViewById(R.id.time_picker_start);
         ImageView timePickerEnd = dialogView.findViewById(R.id.time_picker_end);
         timePickerStart.setOnClickListener(v -> showDatePickerDialog(etTimeStart));
         timePickerEnd.setOnClickListener(v -> showDatePickerDialog(etTimeEnd));
-
-        // Xử lý nút quay lại
         btnBack.setOnClickListener(v -> dialog.dismiss());
 
-        // Xử lý thêm hoạt động
         btnUpdate.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String desc = etDescription.getText().toString().trim();
@@ -216,18 +209,23 @@ public class ActivitiesManageActivity extends AppCompatActivity {
                 return;
             }
 
-            // Lấy danh mục được chọn
-            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
-            String categoryTitle = selectedCategory.getTitle(); // hoặc getKey() nếu bạn muốn lưu key
+            int point = 0;
+            try {
+                point = Integer.parseInt(reward);
+            } catch (NumberFormatException e) {
+                point = 0;
+            }
 
-            // Tạo object hoạt động
+            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
+            String categoryTitle = selectedCategory.getTitle();
+
             String key = database.push().getKey();
             ActivityModel activity = new ActivityModel(name, categoryTitle, desc, timeStart, timeEnd, quantity, 0);
             activity.setKey(key);
             activity.setLocation(location);
+            activity.setPoints(point);
             activity.setEventOrganizer("Tự động");
 
-            // Lưu vào Firebase
             database.child(key).setValue(activity)
                     .addOnSuccessListener(unused -> {
                         Toast.makeText(this, "Thêm hoạt động thành công", Toast.LENGTH_SHORT).show();
@@ -240,6 +238,7 @@ public class ActivitiesManageActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
 
 
 
@@ -266,7 +265,6 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.design_manager_activity, null);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
 
-        // Ánh xạ view
         EditText etName = dialogView.findViewById(R.id.et_ten_hoat_dong);
         EditText etDescription = dialogView.findViewById(R.id.et_mo_ta);
         Spinner tvCategory = dialogView.findViewById(R.id.spinner_category);
@@ -278,17 +276,15 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         Button btnUpdate = dialogView.findViewById(R.id.btn_update);
         ImageView btnBack = dialogView.findViewById(R.id.btn_back);
 
-        // Gán dữ liệu ban đầu
         etName.setText(activity.getName());
         etDescription.setText(activity.getDescription());
         etTimeStart.setText(activity.getStartTime());
         etTimeEnd.setText(activity.getEndTime());
         etLocation.setText(activity.getLocation());
         etQuantity.setText(activity.getQuantity());
-        etReward.setText("0");
+        etReward.setText(String.valueOf(activity.getPoints()));  // ✅ Gán giá trị point
         btnUpdate.setText("Cập nhật");
 
-        // Danh sách danh mục và adapter
         List<CategoryModel> categoryList = new ArrayList<>();
         ArrayAdapter<CategoryModel> categoryAdapter = new ArrayAdapter<>(
                 this,
@@ -298,20 +294,17 @@ public class ActivitiesManageActivity extends AppCompatActivity {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         tvCategory.setAdapter(categoryAdapter);
 
-        // Tải danh mục từ Firebase và chọn đúng danh mục của activity
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference("categories");
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 categoryList.clear();
-                int selectedIndex = 0;
-                int i = 0;
+                int selectedIndex = 0, i = 0;
                 for (DataSnapshot item : snapshot.getChildren()) {
                     CategoryModel category = item.getValue(CategoryModel.class);
                     if (category != null) {
                         category.setKey(item.getKey());
                         categoryList.add(category);
-
                         if (category.getTitle().equals(activity.getType())) {
                             selectedIndex = i;
                         }
@@ -319,7 +312,7 @@ public class ActivitiesManageActivity extends AppCompatActivity {
                     }
                 }
                 categoryAdapter.notifyDataSetChanged();
-                tvCategory.setSelection(selectedIndex); // Hiển thị đúng danh mục của hoạt động
+                tvCategory.setSelection(selectedIndex);
             }
 
             @Override
@@ -328,16 +321,13 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             }
         });
 
-        // Nút quay lại
         btnBack.setOnClickListener(v -> dialog.dismiss());
 
-        // Chọn ngày
         ImageView timePickerStart = dialogView.findViewById(R.id.time_picker_start);
         ImageView timePickerEnd = dialogView.findViewById(R.id.time_picker_end);
         timePickerStart.setOnClickListener(v -> showDatePickerDialog(etTimeStart));
         timePickerEnd.setOnClickListener(v -> showDatePickerDialog(etTimeEnd));
 
-        // Nút cập nhật
         btnUpdate.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String desc = etDescription.getText().toString().trim();
@@ -345,24 +335,31 @@ public class ActivitiesManageActivity extends AppCompatActivity {
             String timeEnd = etTimeEnd.getText().toString().trim();
             String location = etLocation.getText().toString().trim();
             String quantity = etQuantity.getText().toString().trim();
+            String reward = etReward.getText().toString().trim();
 
             if (name.isEmpty() || desc.isEmpty() || timeStart.isEmpty() || timeEnd.isEmpty() || categoryList.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Lấy danh mục được chọn
-            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
-            String categoryTitle = selectedCategory.getTitle(); // hoặc getKey()
+            int point = 0;
+            try {
+                point = Integer.parseInt(reward);
+            } catch (NumberFormatException e) {
+                point = 0;
+            }
 
-            // Cập nhật model
+            CategoryModel selectedCategory = (CategoryModel) tvCategory.getSelectedItem();
+            String categoryTitle = selectedCategory.getTitle();
+
             activity.setName(name);
             activity.setDescription(desc);
-            activity.setType(categoryTitle);  // lưu tên danh mục
+            activity.setType(categoryTitle);
             activity.setStartTime(timeStart);
             activity.setEndTime(timeEnd);
             activity.setLocation(location);
             activity.setQuantity(quantity);
+            activity.setPoints(point);  // ✅ cập nhật point mới
 
             String key = activity.getKey();
             if (key != null) {
@@ -379,6 +376,7 @@ public class ActivitiesManageActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
 
 
 }
