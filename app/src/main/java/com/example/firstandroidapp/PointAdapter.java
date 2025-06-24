@@ -113,7 +113,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
             String reason = edtReason.getText().toString();
             if (!reason.isEmpty()) {
                 // Cập nhật trạng thái trên Firebase
-                updateStatusInFirebase(userId, pointId, "Từ chối xác nhận");
+                updateStatusInFirebase(userId, pointId, "Bị từ chối");
 
                 // Xóa đối tượng khỏi danh sách và cập nhật RecyclerView
                 pointList.remove(position); // Xóa đối tượng khỏi danh sách
@@ -193,7 +193,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
         // Xử lý khi nhấn "Đóng"
         btnConfirmPopup.setOnClickListener(v -> {
             // Cập nhật trạng thái trên Firebase
-            updateStatusInFirebase(userId, pointId, "Xác nhận thành công");
+            updateStatusInFirebase(userId, pointId, "Đã xác nhận");
 
             // Xóa object từ Firebase và cập nhật lại RecyclerView
             ((PointActivity) context).deletePointFromFirebase(pointId, position);
