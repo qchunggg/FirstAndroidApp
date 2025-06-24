@@ -36,9 +36,7 @@ public class HistoryFragment extends Fragment {
     private HistoryAdapter historyAdapter;
     private ArrayList<HistoryModel> activityList;
     private ArrayList<HistoryModel> fullActivityList;
-    private DatabaseReference databaseReference;
     private Spinner spinnerState; // Declare Spinner
-
     private android.app.ProgressDialog progressDialog;
 
     @Override
@@ -57,55 +55,10 @@ public class HistoryFragment extends Fragment {
         ivMenu.setOnClickListener(v -> showPopupMenu(v));
 
         // Khởi tạo Firebase
-        databaseReference = FirebaseDatabase.getInstance().getReference("history");
+        loadUserRegisteredActivities();
 
         // Khởi tạo Spinner
         spinnerState = view.findViewById(R.id.spinnerState);
-
-        // Lấy dữ liệu từ Firebase và cập nhật Spinner
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fullActivityList.clear();
-                activityList.clear();
-                Set<String> categories = new HashSet<>();
-
-                // Fetch history data and categories
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HistoryModel history = snapshot.getValue(HistoryModel.class);
-                    if (history != null) {
-                        fullActivityList.add(history);
-                        String category = history.getStatus().replace("\"", "");
-                        categories.add(category);
-                    }
-                }
-
-                // Add "Tất cả" and other categories to list
-                ArrayList<String> categoryList = new ArrayList<>();
-                categoryList.add("Tất cả");
-                categoryList.addAll(categories);
-
-                // Update Spinner with category list
-                if (getContext() != null) {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            getContext(),
-                            R.layout.spinner_dropdown_item,
-                            categoryList
-                    );
-                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                    spinnerState.setAdapter(adapter);
-                }
-
-                // Display all activities by default
-                activityList.addAll(fullActivityList);
-                historyAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("Database error: " + error.getMessage());
-            }
-        });
 
         // Lắng nghe sự kiện chọn item
         spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -141,6 +94,78 @@ public class HistoryFragment extends Fragment {
             }
         }
         historyAdapter.notifyDataSetChanged();
+    }
+
+    private void loadUserRegisteredActivities() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference userActRef = FirebaseDatabase.getInstance()
+                .getReference("userActivities")
+                .child(userId);
+
+        userActRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                fullActivityList.clear();
+                activityList.clear();
+                Set<String> categories = new HashSet<>();
+
+                for (DataSnapshot actSnap : snapshot.getChildren()) {
+                    String activityId = actSnap.getKey();
+
+                    FirebaseDatabase.getInstance().getReference("activities").child(activityId)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnap) {
+                                    if (dataSnap.exists()) {
+                                        String name = dataSnap.child("name").getValue(String.class);
+                                        String desc = dataSnap.child("description").getValue(String.class);
+                                        String type = dataSnap.child("type").getValue(String.class);
+                                        String date = dataSnap.child("startTime").getValue(String.class);
+                                        Integer points = dataSnap.child("points").getValue(Integer.class);
+
+                                        HistoryModel model = new HistoryModel(
+                                                name != null ? name : "",
+                                                "Đã đăng ký",
+                                                type != null ? type : "",
+                                                desc != null ? desc : "",
+                                                date != null ? date : "",
+                                                points != null ? points : 0,
+                                                "Chưa nộp minh chứng"
+                                        );
+
+                                        fullActivityList.add(model);
+                                        categories.add("Đã đăng ký");
+                                        activityList.add(model);
+                                        historyAdapter.notifyDataSetChanged();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError error) {
+                                    // Handle error if needed
+                                }
+                            });
+                }
+
+                // Cập nhật spinner
+                if (getContext() != null) {
+                    ArrayList<String> categoryList = new ArrayList<>();
+                    categoryList.add("Tất cả");
+                    categoryList.addAll(categories);
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                            getContext(),
+                            R.layout.spinner_dropdown_item,
+                            categoryList
+                    );
+                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinnerState.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {}
+        });
     }
 
     private void showPopupMenu(View anchor) {

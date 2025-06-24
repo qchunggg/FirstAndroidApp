@@ -102,20 +102,17 @@ public class ActivitiesActivity extends AppCompatActivity {
                             LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
                             LocalDate endDate = LocalDate.parse(activity.getEndTime(), formatter);
 
-                            int currentQuantity = 0;
-                            int totalQuantity = 0;
 
-                            String[] quantityParts = activity.getQuantity().split("/");
-                            if (quantityParts.length == 2) {
-                                currentQuantity = Integer.parseInt(quantityParts[0].trim());
-                                totalQuantity = Integer.parseInt(quantityParts[1].trim());
-                            } else if (quantityParts.length == 1) {
-                                totalQuantity = Integer.parseInt(quantityParts[0].trim());
-                                currentQuantity = 0;
-                            } else {
-                                continue; // bỏ qua nếu dữ liệu lỗi
+                            String quantityStr = snapshot.child("quantity").getValue(String.class);
+                            activity.setQuantity(quantityStr); // ⟶ để model tự tách current / total
+                            Long current = snapshot.child("currentQuantity").getValue(Long.class);
+                            if (current != null) {
+                                activity.setCurrentQuantity(current.intValue());
                             }
-
+                            DatabaseReference ref = snapshot.getRef();
+                            if (!snapshot.hasChild("currentQuantity")) {
+                                ref.child("currentQuantity").setValue(activity.getCurrentQuantity());
+                            }
 
                             if ((startDate.isEqual(today) || startDate.isAfter(today)) &&
                                     !endDate.isBefore(today)) {
@@ -158,13 +155,17 @@ public class ActivitiesActivity extends AppCompatActivity {
                     if (activity.getKey().equals(updatedActivity.getKey())) {
                         activity.setCurrentQuantity(updatedActivity.getCurrentQuantity());
                         activity.setTotalQuantity(updatedActivity.getTotalQuantity());
+                        activity.setQuantity(updatedActivity.getQuantity());  // ✅ đồng bộ lại chuỗi quantity nếu cần
                         activityList.set(i, activity);
                         break;
                     }
                 }
                 activityAdapter.notifyDataSetChanged();
             }
+            Log.d("ActivitiesActivity", "onActivityResult received, updated: " + updatedActivity.getQuantity());
         }
+
+
     }
 
     private void filterActivitiesByCategory(int categoryIndex) {

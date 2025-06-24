@@ -1,5 +1,6 @@
 package com.example.firstandroidapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,8 +27,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class ActivityFragment extends Fragment {
     private DatabaseReference databaseReference;
     private Spinner spinnerCategory;
     private ImageView ivSearch;
-
+    private ActivityResultLauncher<Intent> detailLauncher;
     private android.app.ProgressDialog progressDialog;
 
     @Override
@@ -59,6 +61,13 @@ public class ActivityFragment extends Fragment {
         fullActivityList = new ArrayList<>();
 
         activityAdapter = new ActivityAdapter(requireContext(), activityList);
+        activityAdapter.setOnActivityClickListener(activity -> {
+            Intent intent = new Intent(requireContext(), DetailEventActivity.class);
+            Log.d("Fragment", "activity.getKey() before gửi sang Detail: " + activity.getKey());
+            intent.putExtra("activity", activity);
+            detailLauncher.launch(intent); // dùng launcher để nhận lại updatedActivity
+        });
+
         recyclerView.setAdapter(activityAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -81,6 +90,17 @@ public class ActivityFragment extends Fragment {
                     ActivityModel activity = snapshot.getValue(ActivityModel.class);
                     if (activity != null) {
                         activity.setKey(snapshot.getKey());
+
+                        String quantityStr = snapshot.child("quantity").getValue(String.class);
+                        activity.setQuantity(quantityStr);
+                        Long current = snapshot.child("currentQuantity").getValue(Long.class);
+                        if (current != null) {
+                            activity.setCurrentQuantity(current.intValue());
+                        }
+                        DatabaseReference ref = snapshot.getRef();
+                        if (!snapshot.hasChild("currentQuantity")) {
+                            ref.child("currentQuantity").setValue(activity.getCurrentQuantity());
+                        }
 
                         try {
                             LocalDate startDate = LocalDate.parse(activity.getStartTime(), formatter);
@@ -142,6 +162,31 @@ public class ActivityFragment extends Fragment {
             intent.putExtra("activityList", new ArrayList<>(fullActivityList));
             startActivity(intent);
         });
+
+        detailLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        ActivityModel updatedActivity = (ActivityModel) result.getData().getSerializableExtra("updatedActivity");
+                        if (updatedActivity != null) {
+                            for (int i = 0; i < activityList.size(); i++) {
+                                if (activityList.get(i).getKey().equals(updatedActivity.getKey())) {
+                                    activityList.set(i, updatedActivity);
+                                    activityAdapter.notifyItemChanged(i);
+                                    break;
+                                }
+                            }
+                            for (int i = 0; i < fullActivityList.size(); i++) {
+                                if (fullActivityList.get(i).getKey().equals(updatedActivity.getKey())) {
+                                    fullActivityList.set(i, updatedActivity);
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+        );
 
         progressDialog = new android.app.ProgressDialog(getContext());
         progressDialog.setMessage("Đang đăng xuất...");

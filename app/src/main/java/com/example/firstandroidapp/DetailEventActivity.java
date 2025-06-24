@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class DetailEventActivity extends AppCompatActivity {
 
-    private TextView tvTitle, tvDescription, tvTime, tvLocation, tvQuantity, tvEventOrganizer;
+    private TextView tvTitle, tvDescription, tvTime, tvLocation, tvQuantity, tvEventOrganizer, tvCategory1;
     private ActivityModel activity;
 
     @Override
@@ -30,44 +30,71 @@ public class DetailEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_event);
 
-        // Nhận activity từ Intent
+        // 1. Nhận activity từ Intent
         activity = (ActivityModel) getIntent().getSerializableExtra("activity");
 
-        // Ánh xạ View
+        // 2. Ánh xạ View
         tvTitle = findViewById(R.id.tvTitle);
         tvDescription = findViewById(R.id.tvDescription);
         tvTime = findViewById(R.id.text_date_event);
         tvQuantity = findViewById(R.id.text_capacity_event);
         tvEventOrganizer = findViewById(R.id.tvCategory2);
         tvLocation = findViewById(R.id.text_location_event);
+        tvCategory1 = findViewById(R.id.tvCategory1);
         ImageView ivBack = findViewById(R.id.ivBack);
         MaterialButton btnRegister = findViewById(R.id.btnRegister);
 
-        // Gán dữ liệu từ activity
+        tvQuantity.setText(activity.getQuantity() + " sinh viên");
+
+        // 3. Gán dữ liệu ban đầu
         tvTitle.setText(activity.getName());
         tvDescription.setText(activity.getDescription());
         tvTime.setText(activity.getStartTime() + " - " + activity.getEndTime());
-        tvQuantity.setText(activity.getCurrentQuantity() + "/" + activity.getTotalQuantity() + " sinh viên");
         tvEventOrganizer.setText(activity.getEventOrganizer());
         tvLocation.setText(activity.getLocation());
+        tvCategory1.setText(activity.getType());
 
-        // Xử lý nút back
+        // 4. Đọc lại quantity từ Firebase để cập nhật mới nhất
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("activities")
+                .child(activity.getKey());
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String quantityStr = snapshot.child("quantity").getValue(String.class);
+                activity.setQuantity(quantityStr); // ép lại từ chuỗi "33" nếu dùng admin
+
+                Long current = snapshot.child("currentQuantity").getValue(Long.class);
+                if (current != null) {
+                    activity.setCurrentQuantity(current.intValue());
+                }
+
+                tvQuantity.setText(activity.getQuantity() + " sinh viên"); // ✅ luôn đè lại từ Firebase
+
+                // Sau khi có dữ liệu mới, xử lý nút đăng ký đúng logic
+                if (activity.getCurrentQuantity() >= activity.getTotalQuantity()) {
+                    btnRegister.setText("Đã đăng ký");
+                    btnRegister.setEnabled(false);
+                    btnRegister.setBackgroundTintList(null);
+                } else {
+                    btnRegister.setText("Đăng ký");
+                    btnRegister.setEnabled(true);
+                    btnRegister.setOnClickListener(v -> showRegisterDialog());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) { }
+        });
+
+        // 5. Xử lý nút back
         ivBack.setOnClickListener(v -> onBackPressed());
-
-        // Xử lý nút đăng ký
-        if (activity.getCurrentQuantity() >= activity.getTotalQuantity()) {
-            btnRegister.setText("Đã đăng ký");
-            btnRegister.setEnabled(false);
-            btnRegister.setBackgroundTintList(null);
-        } else {
-            btnRegister.setText("Đăng ký");
-            btnRegister.setEnabled(true);
-            btnRegister.setOnClickListener(v -> showRegisterDialog());
-        }
 
         Log.d("DetailEventActivity", "Activity: " + activity.getName() +
                 ", Quantity: " + activity.getCurrentQuantity() + "/" + activity.getTotalQuantity());
     }
+
 
     private void showRegisterDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_register_activity, null);
@@ -99,6 +126,8 @@ public class DetailEventActivity extends AppCompatActivity {
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
+                    Log.d("DetailEventActivity", "➡ onDataChange được gọi từ Firebase");
+                    Log.d("DetailEventActivity", "Raw snapshot: " + snapshot.toString());
                     if (snapshot.exists()) {
                         // Người dùng đã đăng ký
                         Toast.makeText(DetailEventActivity.this, "Bạn đã đăng ký hoạt động này rồi!", Toast.LENGTH_SHORT).show();
@@ -117,7 +146,18 @@ public class DetailEventActivity extends AppCompatActivity {
                         // Cho phép đăng ký
                         int newCurrent = current + 1;
                         activity.setCurrentQuantity(newCurrent);
-                        updateQuantityInFirebase(activity.getKey(), newCurrent, total);
+                        activity.setQuantity(newCurrent + "/" + total);
+
+                        // ✅ Ghi lại currentQuantity vào Firebase
+                        DatabaseReference ref = FirebaseDatabase.getInstance()
+                                .getReference("activities")
+                                .child(activityKey);
+                        ref.child("currentQuantity").setValue(newCurrent);
+
+                        Log.d("DetailEventActivity", "Firebase-set currentQuantity = " + activity.getCurrentQuantity());
+                        Log.d("DetailEventActivity", "TextView cập nhật sẽ là: " + activity.getQuantity());
+                        Log.d("DetailEventActivity", "Cập nhật lại hiển thị TV sau khi load Firebase");
+                        tvQuantity.setText(activity.getQuantity() + " sinh viên");
 
                         // Thêm userId vào danh sách đã đăng ký
                         DatabaseReference regRef = FirebaseDatabase.getInstance()
@@ -127,7 +167,16 @@ public class DetailEventActivity extends AppCompatActivity {
                                 .child(userId);
                         regRef.setValue(true);
 
+                        // Ghi vào userActivities để dùng cho History sau này
+                        DatabaseReference userActivityRef = FirebaseDatabase.getInstance()
+                                .getReference("userActivities")
+                                .child(userId)
+                                .child(activityKey);
+                        userActivityRef.setValue(true);
+
                         Toast.makeText(DetailEventActivity.this, "Đăng ký hoạt động thành công", Toast.LENGTH_SHORT).show();
+
+                        Log.d("DetailEventActivity", "Sending updatedActivity: " + activity.getQuantity());
 
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("updatedActivity", activity);
@@ -142,16 +191,5 @@ public class DetailEventActivity extends AppCompatActivity {
                 }
             });
         });
-    }
-
-    private void updateQuantityInFirebase(String activityKey, int newCurrent, int total) {
-        if (activityKey != null) {
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference("activities")
-                    .child(activityKey);
-            ref.child("quantity").setValue(newCurrent + "/" + total)
-                    .addOnSuccessListener(aVoid -> Log.d("DetailEventActivity", "Quantity updated"))
-                    .addOnFailureListener(e -> Log.e("DetailEventActivity", "Update failed", e));
-        }
     }
 }
