@@ -14,6 +14,8 @@ public class ActivityModel implements Serializable {
     private String eventOrganizer;
     private String location;
 
+    private int points;
+
     // Thêm hai trường mới
     private int currentQuantity; // Số lượng đã đăng ký
     private int totalQuantity;   // Số lượng tối đa
@@ -174,5 +176,13 @@ public class ActivityModel implements Serializable {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }
