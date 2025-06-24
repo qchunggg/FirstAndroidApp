@@ -21,7 +21,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ActivityViewHolder> {
+
+    public interface OnActivityClickListener {
+        void onActivityClick(ActivityModel activity);
+    }
+
+    private OnActivityClickListener listener;
+
+    public void setOnActivityClickListener(OnActivityClickListener listener) {
+        this.listener = listener;
+    }
 
     private List<ActivityModel> activitiesList;
     private Context context; // 🟡 Thêm biến context
@@ -93,16 +104,10 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         // Xử lý sự kiện click vào nút Chi tiết
         holder.btnDetail.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DetailEventActivity.class);
-            intent.putExtra("activity", activity); // activity là ActivityModel
-            if (context instanceof ActivitiesActivity) {
-                ((ActivitiesActivity) context).startActivityForResult(intent, 1);
-            } else {
-                context.startActivity(intent); // fallback cho Fragment hoặc SearchActivity
+            if (listener != null) {
+                listener.onActivityClick(activity);
             }
-            Log.d("ActivityAdapter", "btnDetail clicked: " + activity.getName());
         });
-
 
         Log.d("ActivityAdapter", "Binding item at position " + position + ", name: " + activity.getName() + ", visible: " + (holder.itemView.getVisibility() == View.VISIBLE));
     }
@@ -128,14 +133,6 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             tvStatus = itemView.findViewById(R.id.tvStatus);
             btnDetail = itemView.findViewById(R.id.btnDetail);
         }
-    }
-
-    // Thêm phương thức để cập nhật quantity trong Firebase
-    private void updateQuantityInFirebase(String activityKey, int newQuantity, int total) {
-        DatabaseReference activityRef = FirebaseDatabase.getInstance().getReference("activities").child(activityKey);
-        activityRef.child("quantity").setValue(newQuantity + "/" + total) // Giữ nguyên total
-                .addOnSuccessListener(aVoid -> Log.d("ActivityAdapter", "Quantity updated to: " + newQuantity + "/" + total))
-                .addOnFailureListener(e -> Log.e("ActivityAdapter", "Failed to update quantity", e));
     }
 
     public void updateData(List<ActivityModel> newList) {
