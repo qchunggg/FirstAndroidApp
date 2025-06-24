@@ -64,6 +64,7 @@
         <activity android:name=".ActivityManageCategory" />
 
         <activity android:name=".ActivitiesManageActivity" />
+        <activity android:name=".StatisticActivity" />
 
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".RatingActivity">
