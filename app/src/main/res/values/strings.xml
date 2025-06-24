@@ -28,7 +28,21 @@
 
     <!-- Gợi ý cho Spinner chọn tháng -->
     <string name="select_month">Chọn tháng</string>
-
+    <string-array name="months">
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
+        <item>Tháng 8</item>
+        <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
+        <!-- Thêm các hoạt động khác tùy ý -->
+    </string-array>
     <!-- Định nghĩa mảng activity_types -->
     <string-array name="activity_types">
         <item>Hoạt động 1</item>

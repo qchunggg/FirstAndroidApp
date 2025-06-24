@@ -43,6 +43,17 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        // Thống kê
+        LinearLayout itemStatistic = findViewById(R.id.item_stats);
+        itemStatistic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, StatisticActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         // Duyệt & cấp điểm
         LinearLayout itemApprove = findViewById(R.id.item_approve);
         itemApprove.setOnClickListener(new View.OnClickListener() {
