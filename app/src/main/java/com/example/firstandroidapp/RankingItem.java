@@ -38,4 +38,37 @@ public class RankingItem {
     public int getPoints3() {
         return points3;
     }
+
+    // Setter methods (optional)
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setPoints1(int points1) {
+        this.points1 = points1;
+    }
+
+    public void setPoints2(int points2) {
+        this.points2 = points2;
+    }
+
+    public void setPoints3(int points3) {
+        this.points3 = points3;
+    }
+
+    // Override toString() method for easier logging
+    @Override
+    public String toString() {
+        return "RankingItem{" +
+                "userName='" + userName + '\'' +
+                ", userId='" + userId + '\'' +
+                ", points1=" + points1 +
+                ", points2=" + points2 +
+                ", points3=" + points3 +
+                '}';
+    }
 }
