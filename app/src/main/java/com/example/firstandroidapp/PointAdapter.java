@@ -51,6 +51,8 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
         holder.userName.setText(pointItem.getUserName());
         holder.description.setText(pointItem.getDescription());
         holder.date.setText(pointItem.getDate());
+        holder.tvPoints.setText("Điểm: " + pointItem.getPoints());
+
 
         // Sự kiện cho nút "Từ chối"
         holder.btnDecline.setOnClickListener(v -> {
@@ -72,7 +74,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
 
     // ViewHolder để giữ các thành phần giao diện của mỗi item
     public static class PointViewHolder extends RecyclerView.ViewHolder {
-        TextView userName, description, date;
+        TextView userName, description, date,tvPoints;
         Button btnDecline, btnConfirm; // Nút "Từ chối" và "Xác nhận"
 
         public PointViewHolder(@NonNull View itemView) {
@@ -80,6 +82,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointViewHol
             userName = itemView.findViewById(R.id.tvUserName);
             description = itemView.findViewById(R.id.tvDescription);
             date = itemView.findViewById(R.id.tvDate);
+            tvPoints = itemView.findViewById(R.id.tvPoints);
             btnDecline = itemView.findViewById(R.id.btnDecline); // Nút "Từ chối"
             btnConfirm = itemView.findViewById(R.id.btnConfirm); // Nút "Xác nhận"
         }

@@ -6,7 +6,7 @@ public class PointItem {
     private String description;
     private String date;
     private String pointId;
-    private int points;
+    private Integer points;
     private String proofStatus;
     private String status;
     private String type;
@@ -19,7 +19,7 @@ public class PointItem {
         this.description = description;
         this.date = date;
         this.pointId = pointId;
-        this.points = points;
+        this.points = points != 0 ? points : 0;
         this.proofStatus = proofStatus;
         this.status = status;
         this.type = type;

@@ -62,7 +62,7 @@ public class PointActivity extends AppCompatActivity {
                         String pointId = eventSnapshot.getKey();  // Lấy ID của lịch sử
                         String description = eventSnapshot.child("description").getValue(String.class);
                         String date = eventSnapshot.child("date").getValue(String.class);
-                        Integer points = eventSnapshot.child("points").getValue(Integer.class);
+                        Integer points = eventSnapshot.child("points").exists() ? eventSnapshot.child("points").getValue(Integer.class) : 0;
                         String status = eventSnapshot.child("status").getValue(String.class);
                         String proofStatus = eventSnapshot.child("proofStatus").getValue(String.class);
                         String type = eventSnapshot.child("type").getValue(String.class);
@@ -207,7 +207,7 @@ public class PointActivity extends AppCompatActivity {
                             mDatabase.child("history").setValue("default");
                         }
 
-                        Toast.makeText(PointActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
+
                     })
                     .addOnFailureListener(e -> {
                         // Nếu xảy ra lỗi khi xóa, thông báo lỗi
