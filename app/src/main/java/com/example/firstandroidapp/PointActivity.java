@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +33,6 @@ public class PointActivity extends AppCompatActivity {
     private PointAdapter adapter;
     private List<PointItem> itemList;
     private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,68 +41,73 @@ public class PointActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
 
-        // Khởi tạo Firebase Database và Firebase Authentication
+        // Khởi tạo Firebase Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
 
         // Khởi tạo danh sách
         itemList = new ArrayList<>();
 
-        // Lấy UID của người dùng đang đăng nhập
-        String userId = mAuth.getCurrentUser().getUid();
-
-        // Lấy dữ liệu từ Firebase "history"
+        // Lấy dữ liệu từ Firebase "history" và duyệt qua tất cả các userId
         mDatabase.child("history").addListenerForSingleValueEvent(new ValueEventListener() {
+
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Duyệt qua các mục trong bảng "history" và thêm vào itemList
+                // Duyệt qua các userId trong bảng "history"
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String pointId = snapshot.getKey();  // Lấy ID của lịch sử
-                    String description = snapshot.child("description").getValue(String.class);
-                    String date = snapshot.child("date").getValue(String.class);
+                    String userId = snapshot.getKey(); // userId chính là key của mỗi mục trong "history"
 
-                    // Kiểm tra và gán giá trị cho points (nếu points là null thì gán giá trị mặc định là 0)
-                    Integer points = snapshot.child("points").getValue(Integer.class);
-                    final Integer tempPoints = points == null ? 0 : points;  // Tạo biến tạm thời và đảm bảo nó có giá trị hợp lệ
+                    // Lấy thông tin sự kiện từ "history"
+                    for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                        String pointId = eventSnapshot.getKey();  // Lấy ID của lịch sử
+                        String description = eventSnapshot.child("description").getValue(String.class);
+                        String date = eventSnapshot.child("date").getValue(String.class);
+                        Integer points = eventSnapshot.child("points").getValue(Integer.class);
+                        String status = eventSnapshot.child("status").getValue(String.class);
+                        String proofStatus = eventSnapshot.child("proofStatus").getValue(String.class);
+                        String type = eventSnapshot.child("type").getValue(String.class);
+                        String name = eventSnapshot.child("name").getValue(String.class);
 
-                    String proofStatus = snapshot.child("proofStatus").getValue(String.class);  // Lấy trạng thái chứng minh
-                    String status = snapshot.child("status").getValue(String.class);  // Lấy trạng thái
-                    String type = snapshot.child("type").getValue(String.class);  // Lấy loại hoạt động
+                        final Integer tempPoints = (points == null) ? 0 : points;
 
-                    // Truy cập vào bảng "users" để lấy fullName qua userId (UID)
-                    mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot userSnapshot) {
-                            // Lấy tên người dùng từ bảng "users"
-                            String fullName = userSnapshot.child("fullName").getValue(String.class);
-                            if (fullName == null) {
-                                fullName = "Unknown";  // Nếu không có tên, gán giá trị mặc định là "Unknown"
+                        // Truy cập vào bảng "users" để lấy userName qua userId
+                        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot userSnapshot) {
+                                // Lấy tên người dùng từ bảng "users"
+                                String fullName = userSnapshot.child("fullName").getValue(String.class);
+                                if (fullName == null) {
+                                    fullName = "Unknown";  // Nếu không có tên, gán giá trị mặc định là "Unknown"
+                                }
+
+                                // Lọc theo status "Chưa xác nhận"
+                                if ("Chưa xác nhận".equals(status)) {
+                                    // Thêm sự kiện vào danh sách
+                                    itemList.add(new PointItem(userId, fullName, description, date, pointId, tempPoints, proofStatus, status, type, name));
+                                }
+
+                                // Cập nhật RecyclerView sau khi đã lấy tất cả dữ liệu
+                                if (itemList.size() == dataSnapshot.getChildrenCount()) {
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
 
-                            // Log dữ liệu để kiểm tra
-                            Log.d("FirebaseData", "fullName: " + fullName + ", points: " + tempPoints);
-
-                            // Thêm mục vào danh sách
-                            itemList.add(new PointItem(fullName, description, date, pointId, tempPoints, proofStatus, status, type));  // Lưu thêm điểm
-
-                            // Cập nhật RecyclerView sau khi đã lấy tất cả dữ liệu
-                            if (itemList.size() == dataSnapshot.getChildrenCount()) {
-                                adapter.notifyDataSetChanged();
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e("Firebase", "Error fetching user data", databaseError.toException());
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Log.e("Firebase", "Error fetching user data", databaseError.toException());
-                        }
-                    });
+                        });
+                    }
                 }
 
-                // Cài đặt Adapter và LayoutManager cho RecyclerView
-                adapter = new PointAdapter(PointActivity.this, itemList);  // Truyền itemList vào adapter
+                // Cài đặt Adapter và LayoutManager cho RecyclerView chỉ khi dữ liệu đã được lấy đầy đủ
+                adapter = new PointAdapter(PointActivity.this, itemList);
                 recyclerView.setLayoutManager(new LinearLayoutManager(PointActivity.this));
                 recyclerView.setAdapter(adapter);
             }
+
+
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -122,7 +125,7 @@ public class PointActivity extends AppCompatActivity {
     }
 
     // Hàm để hiển thị Popup khi nhấn Từ chối
-    private void showDeclinePopup(final String pointKey, final int position) {
+    private void showDeclinePopup(final String userId, final String pointId, final int position) {
         // Tạo lớp phủ mờ (dim overlay)
         View dimOverlay = new View(this);
         dimOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.dim_overlay));  // Màu mờ (xám)
@@ -160,7 +163,7 @@ public class PointActivity extends AppCompatActivity {
             layout.removeView(dimOverlay); // Xóa lớp phủ mờ khi popup bị đóng
 
             // Xóa dữ liệu trên Firebase sau khi xác nhận lý do từ chối
-            deletePointFromFirebase(pointKey, position);  // Gọi phương thức xóa từ Firebase
+            deletePointFromFirebase(pointId, position);  // Gọi phương thức xóa từ Firebase
         });
 
         // Đóng Popup khi nhấn nút đóng
@@ -172,26 +175,48 @@ public class PointActivity extends AppCompatActivity {
 
     // Xóa dữ liệu từ Firebase
     public void deletePointFromFirebase(String pointId, final int position) {
+        Log.d("DeletePoint", "Attempting to delete pointId: " + pointId);
         if (position >= 0 && position < itemList.size()) {
+            // Xóa mục từ Firebase
             mDatabase.child("history").child(pointId).removeValue()
                     .addOnSuccessListener(aVoid -> {
-                        // Cập nhật RecyclerView sau khi xóa
-                        itemList.remove(position);
+                        // Nếu xóa thành công, cập nhật RecyclerView
+                        itemList.remove(position);  // Xóa item khỏi danh sách
                         adapter.notifyItemRemoved(position);
+
+                        // Kiểm tra lại dữ liệu sau khi xóa
+                        mDatabase.child("history").child(pointId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    Log.d("DeletePoint", "Successfully deleted from Firebase.");
+                                } else {
+                                    Log.d("DeletePoint", "Data still exists after deletion attempt.");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e("DeletePoint", "Error checking data: " + databaseError.getMessage());
+                            }
+                        });
 
                         // Kiểm tra nếu tất cả các phần tử trong "history" đã bị xóa
                         if (itemList.isEmpty()) {
                             // Nếu "history" không còn dữ liệu, thêm một giá trị mặc định
-                            mDatabase.child("history").setValue("default");  // Tạo giá trị mặc định cho history
+                            mDatabase.child("history").setValue("default");
                         }
 
                         Toast.makeText(PointActivity.this, "Xóa thành công", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
+                        // Nếu xảy ra lỗi khi xóa, thông báo lỗi
+                        Log.e("DeletePoint", "Error deleting point: " + e.getMessage());
                         Toast.makeText(PointActivity.this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         } else {
             Log.e("PointActivity", "Invalid position: " + position);
         }
     }
+
 }
