@@ -37,6 +37,9 @@ public class HistoryFragment extends Fragment {
     private ArrayList<HistoryModel> activityList;
     private ArrayList<HistoryModel> fullActivityList;
     private Spinner spinnerState; // Declare Spinner
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private HistoryModel currentSubmittingActivity;
+    private int submittingPosition = -1;
     private android.app.ProgressDialog progressDialog;
 
     @Override
@@ -48,6 +51,14 @@ public class HistoryFragment extends Fragment {
         activityList = new ArrayList<>();
         fullActivityList = new ArrayList<>();
         historyAdapter = new HistoryAdapter(activityList);
+        historyAdapter.setOnSubmitProofClickListener((activity, position) -> {
+            // Giả lập luôn là đã chọn ảnh
+            activity.setProofStatus("Đã nộp minh chứng");
+            activity.setStatus("Chưa xác nhận");
+
+            activityList.set(position, activity);
+            historyAdapter.notifyItemChanged(position);
+        });
         recyclerView.setAdapter(historyAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -61,6 +72,18 @@ public class HistoryFragment extends Fragment {
         spinnerState = view.findViewById(R.id.spinnerState);
 
         // Lắng nghe sự kiện chọn item
+        spinnerState = view.findViewById(R.id.spinnerState);
+
+        // GÁN adapter từ mảng strings.xml
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.activity_states,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerState.setAdapter(adapter);
+
+        // Xử lý chọn spinner
         spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -69,9 +92,7 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing when nothing is selected
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         progressDialog = new android.app.ProgressDialog(getContext());
@@ -98,74 +119,40 @@ public class HistoryFragment extends Fragment {
 
     private void loadUserRegisteredActivities() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference userActRef = FirebaseDatabase.getInstance()
-                .getReference("userActivities")
+        DatabaseReference historyRef = FirebaseDatabase.getInstance()
+                .getReference("history")
                 .child(userId);
 
-        userActRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        historyRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 fullActivityList.clear();
                 activityList.clear();
-                Set<String> categories = new HashSet<>();
 
                 for (DataSnapshot actSnap : snapshot.getChildren()) {
-                    String activityId = actSnap.getKey();
-
-                    FirebaseDatabase.getInstance().getReference("activities").child(activityId)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnap) {
-                                    if (dataSnap.exists()) {
-                                        String name = dataSnap.child("name").getValue(String.class);
-                                        String desc = dataSnap.child("description").getValue(String.class);
-                                        String type = dataSnap.child("type").getValue(String.class);
-                                        String date = dataSnap.child("startTime").getValue(String.class);
-                                        Integer points = dataSnap.child("points").getValue(Integer.class);
-
-                                        HistoryModel model = new HistoryModel(
-                                                name != null ? name : "",
-                                                "Đã đăng ký",
-                                                type != null ? type : "",
-                                                desc != null ? desc : "",
-                                                date != null ? date : "",
-                                                points != null ? points : 0,
-                                                "Chưa nộp minh chứng"
-                                        );
-
-                                        fullActivityList.add(model);
-                                        categories.add("Đã đăng ký");
-                                        activityList.add(model);
-                                        historyAdapter.notifyDataSetChanged();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    // Handle error if needed
-                                }
-                            });
+                    HistoryModel model = actSnap.getValue(HistoryModel.class);
+                    if (model != null) {
+                        fullActivityList.add(model);
+                        activityList.add(model);
+                    }
                 }
 
-                // Cập nhật spinner
-                if (getContext() != null) {
-                    ArrayList<String> categoryList = new ArrayList<>();
-                    categoryList.add("Tất cả");
-                    categoryList.addAll(categories);
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            getContext(),
-                            R.layout.spinner_dropdown_item,
-                            categoryList
-                    );
-                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                    spinnerState.setAdapter(adapter);
-                }
+                historyAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {}
+            public void onCancelled(DatabaseError error) {
+                // Xử lý nếu cần
+            }
         });
+    }
+
+
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Chọn minh chứng"), PICK_IMAGE_REQUEST);
     }
 
     private void showPopupMenu(View anchor) {

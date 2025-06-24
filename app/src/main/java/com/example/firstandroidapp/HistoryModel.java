@@ -9,6 +9,7 @@ public class HistoryModel {
     private int points;
     private String proofStatus;
 
+
     // Constructor có tham số (7 tham số)
     public HistoryModel(String name, String status, String type, String description, String date, int points, String proofStatus) {
         this.name = name;

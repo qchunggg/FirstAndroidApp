@@ -70,16 +70,41 @@ public class HistoryActivity extends AppCompatActivity {
     // Filter activities based on selected state
     private void filterActivitiesByState(int stateIndex) {
         String[] states = getResources().getStringArray(R.array.activity_states);
-        String selectedState = states[stateIndex];
+        String selected = states[stateIndex];
 
         List<HistoryModel> filteredList = new ArrayList<>();
+
         for (HistoryModel activity : activityList) {
-            if (activity.getStatus().equals(selectedState) || selectedState.equals("Tất cả")) {
-                filteredList.add(activity);
+            String proof = activity.getProofStatus();
+
+            switch (selected) {
+                case "Tất cả":
+                    filteredList.add(activity);
+                    break;
+                case "Đã đăng ký":
+                    if (proof != null && !proof.isEmpty()) {
+                        filteredList.add(activity);
+                    }
+                    break;
+                case "Chưa xác nhận":
+                    if ("Chưa xác nhận".equalsIgnoreCase(proof) || "Chưa nộp minh chứng".equalsIgnoreCase(proof)) {
+                        filteredList.add(activity);
+                    }
+                    break;
+                case "Bị từ chối":
+                    if ("Bị từ chối".equalsIgnoreCase(proof)) {
+                        filteredList.add(activity);
+                    }
+                    break;
+                case "Đã xác nhận":
+                    if ("Đã xác nhận".equalsIgnoreCase(proof) || "Đã nộp minh chứng".equalsIgnoreCase(proof)) {
+                        filteredList.add(activity);
+                    }
+                    break;
             }
         }
 
-        // Update the adapter with the filtered list
+        // Cập nhật RecyclerView
         historyAdapter = new HistoryAdapter(filteredList);
         rvHistory.setAdapter(historyAdapter);
     }
