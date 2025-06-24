@@ -52,12 +52,24 @@ public class HistoryFragment extends Fragment {
         fullActivityList = new ArrayList<>();
         historyAdapter = new HistoryAdapter(activityList);
         historyAdapter.setOnSubmitProofClickListener((activity, position) -> {
-            // Giả lập luôn là đã chọn ảnh
+
+            // Cập nhật local
             activity.setProofStatus("Đã nộp minh chứng");
             activity.setStatus("Chưa xác nhận");
-
             activityList.set(position, activity);
             historyAdapter.notifyItemChanged(position);
+
+            // ✅ Ghi lại Firebase (bổ sung đoạn này)
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String activityId = activity.getActivityId();// hàm helper lấy key activity
+
+            DatabaseReference historyRef = FirebaseDatabase.getInstance()
+                    .getReference("history")
+                    .child(userId)
+                    .child(activityId);
+
+            historyRef.child("proofStatus").setValue("Đã nộp minh chứng");
+            historyRef.child("status").setValue("Chưa xác nhận");
         });
         recyclerView.setAdapter(historyAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -129,11 +141,18 @@ public class HistoryFragment extends Fragment {
                 fullActivityList.clear();
                 activityList.clear();
 
+                Set<String> seenActivityIds = new HashSet<>(); // ✅ tránh trùng
+
                 for (DataSnapshot actSnap : snapshot.getChildren()) {
+                    String actId = actSnap.getKey();
+                    if (seenActivityIds.contains(actId)) continue;
+
                     HistoryModel model = actSnap.getValue(HistoryModel.class);
                     if (model != null) {
+                        model.setActivityId(actId); // Gán key
                         fullActivityList.add(model);
                         activityList.add(model);
+                        seenActivityIds.add(actId);
                     }
                 }
 
@@ -141,9 +160,7 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Xử lý nếu cần
-            }
+            public void onCancelled(DatabaseError error) {}
         });
     }
 
