@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     private List<HistoryModel> activityList;
 
@@ -17,7 +18,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         this.activityList = activityList;
     }
 
+    public interface OnSubmitProofClickListener {
+        void onSubmitProofClicked(HistoryModel activity, int position);
+    }
 
+    private OnSubmitProofClickListener listener;
+
+    public void setOnSubmitProofClickListener(OnSubmitProofClickListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -38,6 +47,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.tvActivityDate.setText(activity.getDate());
         holder.tvActivityPoints.setText(activity.getPoints() + " Điểm");
         holder.tvProofStatus.setText(activity.getProofStatus());
+
+        // 👇 Thêm điều kiện hiển thị nút "Nộp minh chứng"
+        if ("Đã đăng ký".equals(activity.getStatus()) &&
+                "Chưa nộp minh chứng".equals(activity.getProofStatus())) {
+            holder.btnSubmitProof.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnSubmitProof.setVisibility(View.GONE);
+        }
+
+        // 👇 Xử lý khi bấm nút (sẽ dùng ở bước sau)
+        holder.btnSubmitProof.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onSubmitProofClicked(activity, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -51,7 +75,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvActivityName, tvActivityStatus, tvActivityType, tvActivityDesc, tvActivityDate, tvActivityPoints, tvProofStatus;
+        TextView tvActivityName, tvActivityStatus, tvActivityType, tvActivityDesc, tvActivityDate, tvActivityPoints, tvProofStatus, btnSubmitProof;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -62,6 +86,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             tvActivityDate = itemView.findViewById(R.id.tvActivityDate);
             tvActivityPoints = itemView.findViewById(R.id.tvActivityPoints);
             tvProofStatus = itemView.findViewById(R.id.tvProofStatus);
+            btnSubmitProof = itemView.findViewById(R.id.btnSubmitProof);
         }
     }
 }

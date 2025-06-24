@@ -53,11 +53,11 @@
                     android:id="@+id/tvActivityStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_upcoming_section"
+                    android:background="@drawable/bg_status_registered"
                     android:backgroundTint="#B9E0DC"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:text="Đã hoàn thành"
+                    android:text="Đã đăng ký"
                     android:textColor="#018786"
                     android:textSize="13sp"
                     android:textStyle="bold" />

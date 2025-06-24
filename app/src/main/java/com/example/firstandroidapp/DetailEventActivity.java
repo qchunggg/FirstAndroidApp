@@ -167,12 +167,23 @@ public class DetailEventActivity extends AppCompatActivity {
                                 .child(userId);
                         regRef.setValue(true);
 
-                        // Ghi vào userActivities để dùng cho History sau này
-                        DatabaseReference userActivityRef = FirebaseDatabase.getInstance()
-                                .getReference("userActivities")
+                        // ✅ Thêm vào bảng history
+                        DatabaseReference historyRef = FirebaseDatabase.getInstance()
+                                .getReference("history")
                                 .child(userId)
                                 .child(activityKey);
-                        userActivityRef.setValue(true);
+
+                        HistoryModel history = new HistoryModel(
+                                activity.getName(),
+                                "Đã đăng ký",
+                                activity.getType(),
+                                activity.getDescription(),
+                                activity.getStartTime(),
+                                activity.getPoints(),
+                                "Chưa nộp minh chứng"
+                        );
+
+                        historyRef.setValue(history);
 
                         Toast.makeText(DetailEventActivity.this, "Đăng ký hoạt động thành công", Toast.LENGTH_SHORT).show();
 

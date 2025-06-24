@@ -63,9 +63,10 @@
 
     <string-array name="activity_states">
         <item>Tất cả</item>
-        <item>Đã hoàn thành</item>
-        <item>Chưa hoàn thành</item>
-        <item>Đang tiến hành</item>
+        <item>Đã đăng ký</item>
+        <item>Chưa xác nhận</item>
+        <item>Bị từ chối</item>
+        <item>Đã xác nhận</item>
     </string-array>
 
 
